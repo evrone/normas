@@ -7,7 +7,10 @@ Now you can clone this repo and try [example with Rails](examples/normas_on_rail
 
 Feel free to start watching and star project in order not miss the release or updates.
 
-Sponsored by [Evrone](https://evrone.com/)
+<a href="https://evrone.com/?utm_source=normas">
+  <img src="https://user-images.githubusercontent.com/417688/34437029-dbfe4ee6-ecab-11e7-9d80-2b274b4149b3.png" 
+       alt="Sponsored by Evrone" width="308">
+</a>
 
 ## Installation
 
