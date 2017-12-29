@@ -1,0 +1,74 @@
+// TODO: remake to splats arguments with dynamic type detection
+@mixin font($font-size, $line-height, $font-weight: false, $color: false, $text-transform: false) {
+  @if $font-size {
+    font-size: $font-size;
+  }
+  @if $line-height {
+    line-height: $line-height;
+  }
+  @if $font-weight {
+    // $font-weight is collapsable argument
+    @if type-of($font-weight) == color {
+      $text-transform: $color;
+      $color: $font-weight;
+    } @else {
+      font-weight: font-weight($font-weight);
+    }
+  }
+  @if $color {
+    // $color is collapsable argument
+    @if type-of($color) == color {
+      color: $color;
+    } @else {
+      $text-transform: $color;
+    }
+  }
+  @if $text-transform {
+    text-transform: $text-transform;
+  }
+}
+
+@mixin font-weight($font-weight) {
+  $normalized-font-weight: font-weight($font-weight);
+  @if $normalized-font-weight {
+    font-weight: $normalized-font-weight;
+  } @else {
+    @error 'Unknown argument in @function font-weight($font-weight: #{$font-weight})';
+  }
+}
+
+@mixin ellipsis($display: inline-block, $width: 100%) {
+  @if $display {
+    display: $display;
+  }
+  @if $width {
+    max-width: $width;
+  }
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
+}
+
+@function font-weight($font-weight) {
+  @if ($font-weight == 100 or $font-weight == thin or $font-weight == hairline) {
+    @return 100;
+  } @else if($font-weight == 200 or $font-weight == extralight or $font-weight == ultralight) {
+    @return 200;
+  } @else if($font-weight == 300 or $font-weight == light) {
+    @return 300;
+  } @else if($font-weight == 400 or $font-weight == normal or $font-weight == regular) {
+    @return 400;
+  } @else if($font-weight == 500 or $font-weight == medium) {
+    @return 500;
+  } @else if($font-weight == 600 or $font-weight == semibold or $font-weight == demibold) {
+    @return 600;
+  } @else if($font-weight == 700 or $font-weight == bold) {
+    @return 700;
+  } @else if($font-weight == 800 or $font-weight == extrabold or $font-weight == ultrabold) {
+    @return 800;
+  } @else if($font-weight == 900 or $font-weight == 'black' or $font-weight == heavy) {
+    @return 900;
+  }
+  @return false;
+}

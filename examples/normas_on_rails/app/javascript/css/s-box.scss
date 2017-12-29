@@ -1,0 +1,22 @@
+@import 'base';
+
+.s-box {
+  & + & {
+    margin-top: 10px;
+  }
+  border-radius: $common-border-radius;
+  background: #fff;
+
+  &__caption {
+    padding: 17px 20px;
+    //@include font(12px, 16px, medium);
+    text-transform: uppercase;
+    user-select: none;
+  }
+
+  &__inner {
+    display: block;
+    padding: 20px;
+    word-wrap: break-word;
+  }
+}

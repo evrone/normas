@@ -1,0 +1,20 @@
+!!!
+%html
+  %head
+    %title Normas.js example
+    = csrf_meta_tags
+
+    -#= stylesheet_link_tag    'application', media: 'all', 'data-turbolinks-track': 'reload'
+    -#= javascript_include_tag 'application', 'data-turbolinks-track': 'reload'
+    = javascript_pack_tag 'application'
+    = stylesheet_pack_tag 'application'
+
+  %body
+    %header
+      %nav
+        = link_to_unless_current 'Root', root_path
+        = link_to_unless_current 'Split field', main_split_field_path
+      %hr
+
+    .content
+      = yield

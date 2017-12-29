@@ -1,0 +1,53 @@
+@import 'base';
+
+.b-my-player {
+  width: 33%;
+  margin: 0 auto;
+  background: black;
+
+  @include before {
+    padding-bottom: 9 / 16 * 100%;
+  }
+
+  &__full-screen {
+    @include absolute(10px, 10px);
+  }
+
+  &__playback-controls {
+    @include absolute(false, 10px, 10px, 10px);
+    margin: 0 auto;
+    padding: 5px;
+    background-color: rgba(#fff, 0.2);
+    border-radius: 5px;
+    display: flex;
+  }
+
+  &__play {
+  }
+
+  &__pause {
+    display: none;
+
+  }
+
+  &__stop {
+    display: none;
+    margin-left: 5px;
+  }
+
+  &__full-screen,
+  &__play,
+  &__pause,
+  &__stop {
+    text-align: center;
+    @include size(15px);
+    border-radius: 3px;
+    cursor: pointer;
+    background-color: #394f56;
+
+
+    &:hover {
+      background-color: #296e7b;
+    }
+  }
+}

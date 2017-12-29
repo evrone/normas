@@ -1,0 +1,8 @@
+- case rand(3)
+- when 0
+  = select_tag :sample_select, options_for_select(['Free', 'Basic', 'Advanced', 'Super Platinum'], selected: 'Free'),
+               id: "random_select_#{rand(100_000_000)}"
+- when 1
+  = render 'morpheus'
+- when 2
+  = render 'my_player'

@@ -1,0 +1,64 @@
+@import 'base';
+
+.b-morpheus {
+  margin: 0 auto;
+  width: 450px;
+
+  &__head,
+  &__body {
+  //&__left-hand,
+  //&__right-hand {
+    background: no-repeat url('../images/morpheus.jpg') center top;
+  }
+
+  &__head {
+    @include size(130px, 160px);
+    display: block;
+    margin: 0 auto;
+  }
+
+  &__body {
+    height: 430px - 160px;
+    background-position: center -160px;
+  }
+
+  //&__body > & {
+  //  width: auto;
+  //}
+
+  &__left-hand,
+  &__right-hand {
+    width: 30%;
+    display: block;
+    //position: absolute;
+    //bottom: 35px;
+    height: 100%;
+    margin: 0 auto;
+  }
+
+  &.left-hand,
+  &.right-hand {
+    //width: 30%;
+    //display: block;
+    position: absolute;
+    bottom: 35px;
+    height: 100px;
+  }
+
+  &.left-hand {
+    left: -155px;
+  }
+
+  &.right-hand {
+    right: -155px;
+  }
+
+  //
+  //&__left-hand {
+  //  left: 0;
+  //}
+  //
+  //&__right-hand {
+  //  right: 0;
+  //}
+}

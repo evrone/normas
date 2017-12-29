@@ -1,0 +1,94 @@
+@mixin scrollable {
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  // Edge-tech property for smooth scrolling on touch devices
+  // scss-lint:disable PropertySpelling
+  -webkit-overflow-scrolling: touch;
+  overflow-scrolling: touch;
+  // scss-lint:enable PropertySpelling
+}
+
+@mixin chevron($size, $color, $direction: false, $border-width: 1px) {
+  @if $size {
+    @include size($size);
+  }
+  border-width: $border-width $border-width 0 0;
+  border-style: solid;
+  border-color: $color;
+  @if $direction {
+    @include chevron-direction($direction);
+  }
+  @content;
+}
+
+@mixin chevron-direction($direction) {
+  // up || right || down || left || up-right || up-left || down-left || down-right
+  @if $direction == up {
+    transform: rotate(-45deg);
+  } @else if $direction == right {
+    transform: rotate(45deg);
+  } @else if $direction == down {
+    transform: rotate(135deg);
+  } @else if $direction == left {
+    transform: rotate(-135deg);
+  } @else if $direction == up-right {
+    transform: rotate(0deg);
+  } @else if $direction == up-left {
+    transform: rotate(-90deg);
+  } @else if $direction == down-left {
+    transform: rotate(-180deg);
+  } @else if $direction == down-right {
+    transform: rotate(-270deg);
+  } @else {
+    @error 'Unknown argument in chevron-direction($direction: #{$direction})';
+  }
+}
+
+@mixin cross(
+  $element-size, $line-size, $line-color,
+  $set-element-size: true, $line-width: 1px,
+  $rotate: false, $hover-color: false) {
+  @if $set-element-size {
+    @include size($element-size);
+  }
+  @include both {
+    @include size(0, $line-size);
+    @include absolute(($element-size - $line-size) / 2, false, false, ($element-size - $line-width) / 2);
+    border-right: $line-width solid $line-color;
+    @content;
+  }
+  @if $rotate {
+    &::before {
+      transform: rotate(-45deg);
+    }
+    &::after {
+      transform: rotate(45deg);
+    }
+  } @else {
+    &::after {
+      transform: rotate(90deg);
+    }
+  }
+  @if $hover-color {
+    &:hover {
+      &::before,
+      &::after {
+        border-color: $hover-color;
+      }
+    }
+  }
+}
+
+@mixin cross-size($element-size, $line-size) {
+  $padding: ($element-size - $line-size) / 2;
+  @include size($element-size);
+  &::before,
+  &::after {
+    height: $line-size;
+    @if $padding > 0 {
+      top: $padding;
+    }
+    left: $element-size / 2;
+  }
+}

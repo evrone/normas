@@ -1,0 +1,138 @@
+@import 'base';
+
+.js-popover-trigger {
+  //@include cursor-pointer;
+  //> .s-popover span {
+  //  cursor: default;
+  //}
+}
+
+@mixin s-popover-style {
+  background-color: #fff;
+  border-radius: $common-border-radius;
+  box-shadow:
+    0 0 13px rgba(#296e7b, 0.19),
+    0 8px 25px rgba(#394f56, 0.13);
+}
+
+@mixin s-popover-show-transition($show,
+                                 $shift: -30px,
+                                 $duration: $common-ui-transition-duration,
+                                 $enter-transition: $bounce-transition) {
+  @if (not $show) {
+    @include transition-props((
+      visibility: hidden,
+      opacity: 0,
+      transform: scale(0.9) translate(0, $shift)
+    ), $duration, $will-change: true);
+  } @else {
+    @include transition-props((
+      visibility: visible,
+      opacity: 1,
+      transform: scale(1) translate(0, 0)
+    ), $duration, $enter-transition);
+  }
+}
+
+.s-popover {
+  //@include font($font-size-base, $line-height-base, regular, $c-base);
+  text-align: left;
+  white-space: normal;
+
+  //@include gpu;
+  @include absolute(100%, false, false, 0);
+
+  min-width: 100%;
+  min-height: 35px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column;
+  z-index: 101;
+  @include s-popover-style;
+  @include s-popover-show-transition(false);
+
+  .s-popover-hover-trigger:hover + &,
+  .s-popover-hover-trigger:hover > &,
+  &.show {
+    @include s-popover-show-transition(true);
+  }
+  cursor: default;
+
+  &.with-corner {
+    @include before {
+      @include s-popover-style;
+      @include size(21px);
+      transform: rotate(45deg);
+      @include absolute(-2px, 0, false, 0);
+      margin: auto;
+    }
+  }
+
+  > .s-box__inner {
+    background: #fff;
+    border-radius: $common-border-radius;
+  }
+
+  &.right {
+    right: 0;
+    left: auto;
+  }
+  //@include desktop-tablet {
+  //  &.desktop-right {
+  //    right: 0;
+  //    left: auto;
+  //  }
+  //}
+
+  &__caption {
+    @include height-with-line(50px);
+    //border-bottom: 1px solid $c-form-border;
+    //@include font(12px, false, medium);
+    text-align: center;
+    text-transform: uppercase;
+    user-select: none;
+    background: #fff;
+    border-radius: $common-border-radius $common-border-radius 0 0;
+  }
+
+  &.select {
+    margin-top: 2px;
+    padding: 8px 0;
+    text-align: left;
+    > .sort_link,
+    > .option {
+      + .sort_link,
+      + .option {
+        margin-top: 4px;
+      }
+      padding: 9px 15px;
+      //@include ellipsis(block);
+      //@include font(14px, 15px, regular, $c-action-gray);
+      @include cursor-pointer;
+      &:hover {
+        //color: $c-action-gray_hover;
+        //background-color: $c-select-option_hover;
+      }
+      &.desc,
+      &.asc,
+      &.selected {
+        color: #fff;
+        //background-color: $c-brand;
+      }
+    }
+  }
+}
+
+//.popover-links {
+//  padding: 7px 0 5px;
+//  > a {
+//    display: block;
+//    padding: 13px 15px;
+//    //@include font(14px, 15px, regular);
+//    &.with-border-top {
+//      margin-top: 5px;
+//      border-top: 1px solid $c-form-border;
+//      padding-top: 17px;
+//    }
+//  }
+//}

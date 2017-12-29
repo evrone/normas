@@ -1,0 +1,34 @@
+@function font-source-declaration($font-family, $file-path, $file-formats, $base64: false) {
+  $src: ();
+  $formats-map: (
+    eot:   '#{$file-path}.eot?#iefix' format('embedded-opentype'),
+    woff2: '#{$file-path}.woff2' format('woff2'),
+    woff:  '#{$file-path}.woff' format('woff'),
+    ttf:   '#{$file-path}.ttf' format('truetype'),
+    svg:   '#{$file-path}.svg##{$font-family}' format('svg')
+  );
+  @each $key, $values in $formats-map {
+    @if contains($file-formats, $key) {
+      $file-path: nth($values, 1);
+      $font-format: nth($values, 2);
+      $url: if($base64, inline($file-path), resolve($file-path));
+      $src: append($src, $url $font-format, comma);
+    }
+  }
+  @return $src;
+}
+
+@mixin font-face(
+  $font-name,
+  $file-path,
+  $weight: normal,
+  $style: normal,
+  $file-formats: eot woff2 woff ttf svg,
+  $base64: false) {
+  @font-face {
+    font-family: $font-name;
+    font-style: $style;
+    font-weight: font-weight($weight);
+    src: font-source-declaration($font-name, $file-path, $file-formats, $base64);
+  }
+}

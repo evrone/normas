@@ -1,0 +1,38 @@
+{
+  "name": "normas",
+  "version": "0.2.0",
+  "description": "Normal Ligtweight Javascript Framework for server-side render compatible with Turbolinks",
+  "author": "Dmitry Karpunin <koderfunk@gmail.com>",
+  "license": "MIT",
+  "keywords": [
+    "lightweight",
+    "framework",
+    "turbolinks"
+  ],
+  "repository": "evrone/normas",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "main": "dist/js/index.js",
+  "module": "dist/js/index.js",
+  "esnext": "src/js/index.js",
+  "scripts": {
+    "build": "webpack"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-loader": "^7.1.2",
+    "babel-plugin-syntax-dynamic-import": "^6.18.0",
+    "babel-plugin-transform-class-properties": "^6.24.1",
+    "babel-plugin-transform-object-rest-spread": "^6.26.0",
+    "babel-preset-env": "^1.6.0",
+    "jquery": "^3.2.1",
+    "turbolinks": "^5.0.3",
+    "webpack": "^3.7.1",
+    "webpack-bundle-analyzer": "^2.9.0"
+  }
+}

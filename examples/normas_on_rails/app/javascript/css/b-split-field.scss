@@ -1,0 +1,87 @@
+@import 'base';
+
+$c-row: #008037;
+$c-cell: #003780;
+
+.b-split-field {
+  &__row {
+    display: flex;
+
+    background-color: #c8f6cf;
+    //border: 3px solid $c-row;
+    border-radius: 5px;
+    padding: 10px;
+
+    & + & {
+      margin-top: 10px;
+    }
+  }
+
+  &__cell {
+    flex: 0 1 100%;
+    min-height: 44px;
+
+    background-color: #abd4ed;
+    //border: 3px solid $c-cell;
+    border-radius: 5px;
+    padding: 10px;
+
+    & + & {
+      margin-left: 10px;
+    }
+  }
+
+  $controls-space: 2px;
+  &__controls {
+    @include absolute(3px, false, false, 3px);
+    z-index: 1;
+    width: $controls-space * 4 + 20px * 3;
+    border-radius: 3px;
+    padding: $controls-space;
+    background: #999999;
+
+    display: flex;
+  }
+
+  &__control {
+
+    flex: 0 0 20px;
+    height: 20px;
+    background: #CCCCCC;
+    border-radius: 2px;
+    padding: 2px;
+    cursor: pointer;
+
+    &:hover {
+      background: #EEEEEE;
+    }
+
+    & + & {
+      margin-left: $controls-space;
+    }
+
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+
+    &_split-row {
+      flex-direction: column;
+
+      @include both {
+        @include size(14px, 6px);
+        border: 2px solid $c-row;
+      }
+    }
+
+    &_split-cell {
+      @include both {
+        @include size(6px, 14px);
+        border: 2px solid $c-cell;
+      }
+    }
+
+    &_remove {
+      @include cross(20px, 18px, #BB5555, false, 2px, true);
+    }
+  }
+}

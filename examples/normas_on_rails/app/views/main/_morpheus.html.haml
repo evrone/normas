@@ -1,0 +1,13 @@
+- morpheus_part ||= 'head'
+- if morpheus_part == 'body'
+  .b-morpheus__body
+    = render 'morpheus', morpheus_part: 'left-hand'
+    = render 'morpheus', morpheus_part: 'right-hand'
+- else
+  .b-morpheus{ class: morpheus_part }
+    = link_to '', main_morpheus_path, remote: true,
+            class: "js-popover-trigger b-morpheus__#{morpheus_part}",
+            data: { popover_selector_scope: 'next' }
+    .s-popover.js-popover
+      .s-box__inner
+        Loading...

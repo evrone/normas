@@ -1,0 +1,10 @@
+.b-split-field__cell
+  %nav.b-split-field__controls
+    = link_to '', main_split_field_cell_path, remote: true,
+              class: 'b-split-field__control b-split-field__control_split-cell js-split-cell'
+    = link_to '', main_split_field_row_path, remote: true,
+              class: 'b-split-field__control b-split-field__control_split-row js-split-row'
+    .b-split-field__control.b-split-field__control_remove.js-remove-cell
+
+  .b-split-field__row
+    = render 'random_component'

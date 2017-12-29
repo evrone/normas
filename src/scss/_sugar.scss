@@ -1,0 +1,134 @@
+// borrowed from https://github.com/thoughtbot/neat
+@function is-not($value) {
+  @return if($value, false, true);
+}
+
+@function is-even($value) {
+  @return if(round($value / 2) * 2 == $value, true, false);
+}
+
+@function contains($list, $values...) {
+  @each $value in $values {
+    @if type-of(index($list, $value)) != 'number' {
+      @return false;
+    }
+  }
+  @return true;
+}
+
+@function fix-line-height($line-height) {
+  //@return if(is-even($line-height), $line-height, $line-height - 1px);
+  @return $line-height;
+}
+
+@mixin height-with-line($height) {
+  height: $height;
+  line-height: fix-line-height($height);
+}
+
+@mixin presence-props($props) {
+  @each $prop, $value in $props {
+    @if $value {
+      #{$prop}: #{$value};
+    }
+  }
+}
+
+@mixin size($width, $height: $width) {
+  @include presence-props((width: $width, height: $height));
+}
+
+@mixin position($position, $top: false, $right: false, $bottom: false, $left: false) {
+  @include presence-props((position: $position, top: $top, right: $right, bottom: $bottom, left: $left));
+}
+
+@mixin absolute($top: false, $right: false, $bottom: false, $left: false) {
+  @include position(absolute, $top, $right, $bottom, $left);
+}
+
+@mixin fixed($top: false, $right: false, $bottom: false, $left: false) {
+  @include position(fixed, $top, $right, $bottom, $left);
+}
+
+@mixin before($display: block, $content: '') {
+  &::before {
+    display: $display;
+    content: $content;
+    @content;
+  }
+}
+
+@mixin after($display: block, $content: '') {
+  &::after {
+    display: $display;
+    content: $content;
+    @content;
+  }
+}
+
+@mixin both($display: block, $content: '') {
+  &::before,
+  &::after {
+    display: $display;
+    content: $content;
+    @content;
+  }
+}
+
+@mixin disabled {
+  cursor: default;
+  pointer-events: none;
+}
+
+@mixin cursor-pointer($simple: false) {
+  user-select: none;
+  @if $simple {
+    cursor: pointer;
+  } @else {
+    &,
+    & span {
+      cursor: pointer;
+    }
+  }
+}
+
+@mixin cursor-default($simple: false) {
+  @if $simple {
+    cursor: default;
+  } @else {
+    &,
+    & span {
+      cursor: default;
+    }
+  }
+}
+
+@mixin gpu {
+  transform: translateZ(0);
+}
+
+$common-ui-transition-duration: 300ms !default;
+
+@mixin transition-props($props, $duration: $common-ui-transition-duration, $transition-function: ease, $will-change: false) {
+  $transitions: ();
+  $will-change-props: ();
+  @each $prop, $value in $props {
+    #{$prop}: $value;
+    $tf: if($prop == visibility, if($value == hidden, step-end, step-start), $transition-function);
+    $transitions: append($transitions, $prop $duration $tf, comma);
+    @if $will-change {
+      $will-change-props: append($will-change-props, $prop, comma);
+    }
+  }
+  transition: $transitions;
+  @if $will-change {
+    will-change: $will-change-props;
+  }
+}
+
+@function vertical-paddings($outer-height, $inner-height) {
+  $space: $outer-height - $inner-height;
+  $space-bottom: round($space / 2);
+  $space-top: $space - $space-bottom;
+  @return $space-top $space-bottom $space;
+}
