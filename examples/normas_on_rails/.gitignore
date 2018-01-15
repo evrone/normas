@@ -8,6 +8,7 @@
 /.bundle
 
 /.generators
+/.rakeTasks
 
 # Ignore all logfiles and tempfiles.
 /log/*

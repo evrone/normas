@@ -1,6 +1,4 @@
-import isArray from 'lodash/isArray';
-import compact from 'lodash/compact';
-import map from 'lodash/map';
+import { compact, map, isArray } from '../lib/helpers';
 
 export function filterUrl($form, filterNames = null) {
   let params = $form.serializeArray();

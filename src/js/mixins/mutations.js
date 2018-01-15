@@ -1,7 +1,5 @@
 // EXPERIMENTAL
 
-import filter from 'lodash/filter';
-
 let initialMutations = true;
 
 export default Base => (class extends Base {
@@ -45,7 +43,7 @@ export default Base => (class extends Base {
   }
 
   static filterMutationNodes(nodes) {
-    return filter(nodes, node => {
+    return Array.prototype.filter.call(nodes, node => {
       if (initialMutations) {
         node.normasInitialMutationReady = true;
         if (node.parentElement && node.parentElement.normasInitialMutationReady) {

@@ -1,4 +1,4 @@
-import mapValues from 'lodash/mapValues';
+import { isFunction, isString, isPlainObject, mapValues } from './lib/helpers';
 import NormasBase from './mixins/base';
 import normasEvents from './mixins/events';
 
@@ -35,17 +35,17 @@ export default class extends normasEvents(NormasBase) {
     const { events } = this.constructor;
     if (events) {
       if (!this.linkedEvents) {
-        this.linkedEvents = this.linkEvents(typeof events === 'function' ? events() : events);
+        this.linkedEvents = this.linkEvents(isFunction(events) ? events() : events);
       }
       this.listenedEvents = this.listenEvents(this.linkedEvents);
     }
   }
 
   linkEvents(events) {
-    return mapValues(events, handle => typeof handle === 'string' ?
+    return mapValues(events, handle => isString(handle) ?
       this[handle].bind(this)
       :
-      (typeof handle === 'object' ? this.linkEvents(handle) : handle)
+      (typeof isPlainObject(handle) ? this.linkEvents(handle) : handle)
     );
   }
 };

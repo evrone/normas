@@ -1,7 +1,4 @@
-import isFunction from 'lodash/isFunction';
-import isPlainObject from 'lodash/isPlainObject';
-import flatten from 'lodash/flatten';
-import debounce from 'lodash/debounce';
+import { isFunction, isPlainObject, debounce, flatten } from '../lib/helpers';
 
 export default Base => (class extends Base {
   constructor(options) {

@@ -1,7 +1,5 @@
 // TODO: may be rename Views, views, View, view
-import filter from 'lodash/filter';
-import find from 'lodash/find';
-import without from 'lodash/without';
+import { filter, find, without } from '../lib/helpers';
 import View from '../view';
 
 // require content mixin
