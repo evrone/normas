@@ -1,5 +1,5 @@
-import Normas from 'normas/src/js/normasWithTurbolinks';
-import normasMutations from 'normas/src/js/mixins/mutations';
+import Normas from 'normas/dist/js/normasWithTurbolinks';
+import normasMutations from 'normas/dist/js/normasMutations';
 // import Turbolinks from 'turbolinks';
 import Turbolinks from '../../../vendor/turbolinks-debug';
 

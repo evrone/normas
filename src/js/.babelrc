@@ -13,6 +13,7 @@
     ]
   ],
   "plugins": [
+    "external-helpers",
     "syntax-dynamic-import",
     "transform-export-extensions",
     "transform-object-rest-spread",

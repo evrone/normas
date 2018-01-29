@@ -8,6 +8,7 @@
     "jquery": "^3.2.1",
     "jquery-ujs": "^1.2.2",
     "lodash": "^4.17.4",
+    "normas": "^0.2.0",
     "prop-types": "^15.6.0",
     "react": "^16.2.0",
     "react-dom": "^16.2.0",

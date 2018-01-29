@@ -6,7 +6,7 @@ export default Base => (class extends Base {
     this.eventsDebug = this.debugMode && options.eventsDebug || false;
     if (this.eventsDebug) {
       this.eventsLogBuffer = [];
-      this.eventsLog = debounce(this.eventsLog, 20);
+      this.eventsLog = debounce(this.eventsLog.bind(this), 20);
     }
     this.log('info', `"${this.instanceName}" events mixin activated. eventsDebug =`, this.eventsDebug);
   }

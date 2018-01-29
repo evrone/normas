@@ -3468,6 +3468,12 @@ normalize-url@^1.4.0:
     query-string "^4.1.0"
     sort-keys "^1.0.0"
 
+normas@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/normas/-/normas-0.2.0.tgz#c3f87ed3f8d1377e67d4d03dd391303ef3ad8a6f"
+  dependencies:
+    lodash "^4.17.4"
+
 npm-run-path@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/npm-run-path/-/npm-run-path-2.0.2.tgz#35a9232dfa35d7067b4cb2ddf2357b1871536c5f"

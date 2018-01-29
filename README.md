@@ -243,7 +243,6 @@ $('.some-selector').filter('.jquery-chain').each$(($element) => {
 ## Roadmap
 
 - More readme and documentation
-- Use rollup for build dist
 - More examples of usage with actual javascript plugins and libs
 - Improve debugging
 - Optional jQuery usage
