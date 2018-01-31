@@ -1,30 +1,31 @@
-// TODO: remake to splats arguments with dynamic type detection
-@mixin font($font-size, $line-height, $font-weight: false, $color: false, $text-transform: false) {
+@mixin font($font-size, $line-height: false, $args...) {
   @if $font-size {
     font-size: $font-size;
   }
   @if $line-height {
     line-height: $line-height;
   }
-  @if $font-weight {
-    // $font-weight is collapsable argument
-    @if type-of($font-weight) == color {
-      $text-transform: $color;
-      $color: $font-weight;
+  @each $arg in $args {
+    $arg-part: nth($arg, 1);
+    @if type-of($arg-part) == color {
+      color: $arg;
+    } @else if index(capitalize lowercase uppercase, $arg-part) {
+      text-transform: $arg;
+    } @else if index(center left right, $arg-part) {
+      text-align: $arg;
+    } @else if index(blink line-through overline underline, $arg-part) {
+      text-decoration: $arg;
+    } @else if index(pre pre-line pre-wrap nowrap, $arg-part) {
+      white-space: $arg;
     } @else {
-      font-weight: font-weight($font-weight);
+      $normalized-font-weight: font-weight($arg-part);
+      @if $normalized-font-weight {
+        $arg: set-nth($arg, 1, $arg-part);
+        font-weight: $arg;
+      } @else {
+        @error 'Unknown argument in @mixin font(..., #{$arg-part}:#{type-of($arg-part)}, ..,)';
+      }
     }
-  }
-  @if $color {
-    // $color is collapsable argument
-    @if type-of($color) == color {
-      color: $color;
-    } @else {
-      $text-transform: $color;
-    }
-  }
-  @if $text-transform {
-    text-transform: $text-transform;
   }
 }
 

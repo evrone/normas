@@ -107,6 +107,10 @@
   transform: translateZ(0);
 }
 
+@mixin ios-smooth-scroll {
+  -webkit-overflow-scrolling: touch;
+}
+
 $common-ui-transition-duration: 300ms !default;
 
 @mixin transition-props($props, $duration: $common-ui-transition-duration, $transition-function: ease, $will-change: false) {

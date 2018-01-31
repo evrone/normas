@@ -11,8 +11,8 @@ export default Base => (class extends Base {
     this.log('info', `"${this.instanceName}" events mixin activated. eventsDebug =`, this.eventsDebug);
   }
 
-  trigger(...args) {
-    this.$el.trigger(...args);
+  trigger(eventName, ...args) {
+    this.$el.trigger(eventName, args);
   }
 
   listenEvents(...args) {

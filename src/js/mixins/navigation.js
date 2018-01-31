@@ -2,6 +2,7 @@
 export default Base => (class extends Base {
   static pageEnterEventName = 'page:enter';
   static pageLeaveEventName = 'page:leave';
+  static pageSelector = 'body';
 
   constructor(options) {
     super(options);
@@ -56,12 +57,18 @@ export default Base => (class extends Base {
   }
 
   pageEnter() {
-    this.trigger(this.constructor.pageEnterEventName);
-    this.sayAboutContentEnter(this.$el.find('body'));
+    const $page = this.$page();
+    this.trigger(this.constructor.pageEnterEventName, $page);
+    this.sayAboutContentEnter($page);
   }
 
   pageLeave() {
-    this.sayAboutContentLeave(this.$el.find('body'));
-    this.trigger(this.constructor.pageLeaveEventName);
+    const $page = this.$page();
+    this.sayAboutContentLeave($page);
+    this.trigger(this.constructor.pageLeaveEventName, $page);
+  }
+
+  $page() {
+    return this.$(this.constructor.pageSelector);
   }
 });

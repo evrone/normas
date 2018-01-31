@@ -1,4 +1,4 @@
-# Normas
+# Normas ![stability-stable](https://img.shields.io/badge/stability-stable-green.svg) ![npm](https://img.shields.io/npm/v/normas.svg)
 
 Normal Lightweight Javascript Framework for server-side render compatible with Turbolinks
 
@@ -100,7 +100,7 @@ const listeningArgs = normas.listenEventsOnElement($myElement, {
 ```js
 normas.listenEvents('cart:update', (itemId, amount) => ...);
 ...
-normas.trigger('cart:update', [itemId, amount]);
+normas.trigger('cart:update', itemId, amount); // Unlike jQuery `.trigger('cart:update', [itemId, amount])`
 ```
 
 ## Content control
@@ -115,8 +115,8 @@ ie, the processing does not need randomly appearing in the content, such as popu
 you can wrap in a `listenToPage([enter][, leave])`:
 ```js
 normas.listenToPage(
-  () => { /* page ready or body replaced by Turbolinks */ }, 
-  () => { /* page prepare to cache and disappearing */ }
+  $page => { /* page ready or body replaced by Turbolinks */ }, 
+  $page => { /* page prepare to cache and disappearing */ }
 );
 ```
 
@@ -125,8 +125,8 @@ whether it's walking through the pages, or processing of the content appearing,
 you need to turn in `listenToContent([enter][, leave])`:
 ```js
 normas.listenToContent(
-  ($root) => { /* $root already in DOM in this callback */ }, 
-  ($root) => { /* $root disappear after this callback */ }
+  $content => { /* $content already in DOM in this callback */ }, 
+  $content => { /* $content disappear after this callback */ }
 );
 ```
 where second callback (on leave content) not necessary.
@@ -134,8 +134,8 @@ where second callback (on leave content) not necessary.
 Next level of content listening is `listenToElement(elementSelector, enter[, leave = null][, delay = 0])`:
 ```js
 normas.listenToElement('.js-element',
-  ($element) => { /* $element already in DOM in this callback */ }, 
-  ($element) => { /* $element disappear after this callback */ },
+  $element => { /* $element already in DOM in this callback */ }, 
+  $element => { /* $element disappear after this callback */ },
   100, // delay for `enter` callback
 );
 ```
@@ -215,8 +215,6 @@ class MyPlayer extends normas.View {
 
   terminate() {
     // ... your actions before events unbinding
-    super.terminate();
-    // ... your actions after events unbinding
   }
 
   gotoFullScreen() {

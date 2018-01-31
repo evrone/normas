@@ -417,16 +417,18 @@ var normasEvents = (function (Base) {
 
     createClass(_class, [{
       key: 'trigger',
-      value: function trigger() {
-        var _$el;
+      value: function trigger(eventName) {
+        for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+          args[_key - 1] = arguments[_key];
+        }
 
-        (_$el = this.$el).trigger.apply(_$el, arguments);
+        this.$el.trigger(eventName, args);
       }
     }, {
       key: 'listenEvents',
       value: function listenEvents() {
-        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
-          args[_key] = arguments[_key];
+        for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
+          args[_key2] = arguments[_key2];
         }
 
         var listeningArgs = this.listenEventsOnElement.apply(this, [this.$el].concat(args));
@@ -441,8 +443,8 @@ var normasEvents = (function (Base) {
       value: function listenEventsOnElement($element) {
         var _constructor;
 
-        for (var _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
-          args[_key2 - 1] = arguments[_key2];
+        for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
+          args[_key3 - 1] = arguments[_key3];
         }
 
         var listeningArgs = (_constructor = this.constructor).listeningArguments.apply(_constructor, args);
@@ -525,8 +527,8 @@ var normasEvents = (function (Base) {
           events: eventName.replace(/\//g, ' '),
           selector: selectors.join(' ').trim(),
           handle: function handle(event) {
-            for (var _len3 = arguments.length, args = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-              args[_key3 - 1] = arguments[_key3];
+            for (var _len4 = arguments.length, args = Array(_len4 > 1 ? _len4 - 1 : 0), _key4 = 1; _key4 < _len4; _key4++) {
+              args[_key4 - 1] = arguments[_key4];
             }
 
             return _handle.apply(undefined, [$(event.currentTarget), event].concat(args));
@@ -589,7 +591,7 @@ var normasContent = (function (Base) {
         $content = this.constructor.filterContent($content, 'normasEntered');
         if ($content.length > 0) {
           $content.removeClass(this.constructor.preventContentEventsClassName);
-          this.trigger(this.constructor.contentEnterEventName, [$content]);
+          this.trigger(this.constructor.contentEnterEventName, $content);
         }
         return $content;
       }
@@ -598,7 +600,7 @@ var normasContent = (function (Base) {
       value: function sayAboutContentLeave($content) {
         $content = this.constructor.filterContent($content, 'normasLeft');
         if ($content.length > 0) {
-          this.trigger(this.constructor.contentLeaveEventName, [$content]);
+          this.trigger(this.constructor.contentLeaveEventName, $content);
         }
         return $content;
       }
@@ -785,14 +787,21 @@ var normasNavigation = (function (Base) {
     }, {
       key: 'pageEnter',
       value: function pageEnter() {
-        this.trigger(this.constructor.pageEnterEventName);
-        this.sayAboutContentEnter(this.$el.find('body'));
+        var $page = this.$page();
+        this.trigger(this.constructor.pageEnterEventName, $page);
+        this.sayAboutContentEnter($page);
       }
     }, {
       key: 'pageLeave',
       value: function pageLeave() {
-        this.sayAboutContentLeave(this.$el.find('body'));
-        this.trigger(this.constructor.pageLeaveEventName);
+        var $page = this.$page();
+        this.sayAboutContentLeave($page);
+        this.trigger(this.constructor.pageLeaveEventName, $page);
+      }
+    }, {
+      key: '$page',
+      value: function $page() {
+        return this.$(this.constructor.pageSelector);
       }
     }]);
     return _class;
@@ -804,6 +813,10 @@ var normasNavigation = (function (Base) {
     enumerable: true,
     writable: true,
     value: 'page:leave'
+  }), Object.defineProperty(_class, 'pageSelector', {
+    enumerable: true,
+    writable: true,
+    value: 'body'
   }), _temp;
 });
 
@@ -817,16 +830,11 @@ var _class = function (_normasEvents) {
     // Override it with your own initialization logic.
     value: function initialize(options) {}
 
-    // Override it (and use this super method) with your own unmount logic.
+    // Override it with your own unmount logic (like compo).
 
   }, {
     key: 'terminate',
-    value: function terminate() {
-      if (this.listenedEvents) {
-        this.forgetEvents(this.listenedEvents);
-        this.listenedEvents = null;
-      }
-    }
+    value: function terminate() {}
   }]);
 
   function _class(options) {
@@ -843,6 +851,15 @@ var _class = function (_normasEvents) {
   }
 
   createClass(_class, [{
+    key: 'destructor',
+    value: function destructor() {
+      this.terminate();
+      if (this.listenedEvents) {
+        this.forgetEvents(this.listenedEvents);
+        this.listenedEvents = null;
+      }
+    }
+  }, {
     key: 'reflectOptions',
     value: function reflectOptions(options) {
       var _this2 = this;
@@ -965,7 +982,7 @@ var normasViews = (function (Base) {
       value: function unbindView($element, viewClass) {
         var view = this.getViewsOnElement($element, viewClass)[0];
         if (view) {
-          view.terminate();
+          view.destructor();
           this.viewInstances = without(this.viewInstances, view);
         }
       }

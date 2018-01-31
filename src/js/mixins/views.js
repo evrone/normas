@@ -65,7 +65,7 @@ export default Base => (class extends Base {
   unbindView($element, viewClass) {
     const view = this.getViewsOnElement($element, viewClass)[0];
     if (view) {
-      view.terminate();
+      view.destructor();
       this.viewInstances = without(this.viewInstances, view);
     }
   }

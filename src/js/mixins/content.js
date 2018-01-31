@@ -32,7 +32,7 @@ export default Base => (class extends Base {
     $content = this.constructor.filterContent($content, 'normasEntered');
     if ($content.length > 0) {
       $content.removeClass(this.constructor.preventContentEventsClassName);
-      this.trigger(this.constructor.contentEnterEventName, [$content]);
+      this.trigger(this.constructor.contentEnterEventName, $content);
     }
     return $content;
   }
@@ -40,7 +40,7 @@ export default Base => (class extends Base {
   sayAboutContentLeave($content) {
     $content = this.constructor.filterContent($content, 'normasLeft');
     if ($content.length > 0) {
-      this.trigger(this.constructor.contentLeaveEventName, [$content]);
+      this.trigger(this.constructor.contentLeaveEventName, $content);
     }
     return $content;
   }

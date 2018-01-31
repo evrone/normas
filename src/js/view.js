@@ -3,16 +3,12 @@ import NormasBase from './mixins/base';
 import normasEvents from './mixins/events';
 
 export default class extends normasEvents(NormasBase) {
-  // Override it with your own initialization logic.
+  // Override it with your own initialization logic (like componentDidUnmount in react).
   initialize(options) {
   }
 
-  // Override it (and use this super method) with your own unmount logic.
+  // Override it with your own unmount logic (like componentWillUnmount in react).
   terminate() {
-    if (this.listenedEvents) {
-      this.forgetEvents(this.listenedEvents);
-      this.listenedEvents = null;
-    }
   }
 
   constructor(options) {
@@ -21,6 +17,14 @@ export default class extends normasEvents(NormasBase) {
     this.reflectOptions(options);
     this.initializeEvents(options);
     this.initialize(options);
+  }
+
+  destructor() {
+    this.terminate();
+    if (this.listenedEvents) {
+      this.forgetEvents(this.listenedEvents);
+      this.listenedEvents = null;
+    }
   }
 
   reflectOptions(options) {
