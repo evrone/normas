@@ -89,6 +89,34 @@ var possibleConstructorReturn = function (self, call) {
   return call && (typeof call === "object" || typeof call === "function") ? call : self;
 };
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var toConsumableArray = function (arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i];
+
+    return arr2;
+  } else {
+    return Array.from(arr);
+  }
+};
+
 // EXPERIMENTAL
 
 var initialMutations = true;
@@ -111,7 +139,7 @@ var mutations = (function (Base) {
           }
 
           var removedNodes = _this.constructor.filterMutationNodes(mutation.removedNodes);
-          var addedNodes = _this.constructor.filterMutationNodes(mutation.addedNodes);
+          var addedNodes = _this.constructor.filterMutationNodes(mutation.addedNodes, true);
 
           if (removedNodes.length > 0) {
             _this.sayAboutContentLeave($(removedNodes));
@@ -122,11 +150,16 @@ var mutations = (function (Base) {
         }
       });
 
-      if (MutationObserver) {
-        _this.observeMutations();
-        _this.log('warn', '"' + _this.instanceName + '" mutation observer activated. (EXPERIMENTAL feature)');
-      } else {
-        _this.log('warn', '"' + _this.instanceName + '" mutation observer NOT DEFINED!');
+      if (!_this.enablings) _this.enablings = {};
+      _this.enablings.mutations = _this.constructor.readOption(options.enablings, 'mutations', true);
+      _this.log.apply(_this, ['info', 'construct'].concat(toConsumableArray(_this.constructor.logColor('\uD83E\uDD16 "' + _this.instanceName + '" MutationObserver %REPLACE%.', _this.enablings.turbolinks ? 'enabled' : 'disabled', _this.enablings.turbolinks ? 'green' : 'blue'))));
+      if (_this.enablings.mutations) {
+        if (MutationObserver) {
+          _this.observeMutations();
+          _this.log('construct', '\uD83E\uDD16 "' + _this.instanceName + '" mutation observer activated. (EXPERIMENTAL feature)');
+        } else {
+          _this.log('warn', 'construct', '\uD83E\uDD16 "' + _this.instanceName + '" mutation observer NOT SUPPORTED!');
+        }
       }
       return _this;
     }
@@ -153,6 +186,8 @@ var mutations = (function (Base) {
     }], [{
       key: 'filterMutationNodes',
       value: function filterMutationNodes(nodes) {
+        var checkParentNode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
         return Array.prototype.filter.call(nodes, function (node) {
           if (initialMutations) {
             node.normasInitialMutationReady = true;
@@ -160,7 +195,7 @@ var mutations = (function (Base) {
               return false;
             }
           }
-          return node.nodeType === 1 && !node.isPreview && node.tagName !== 'TITLE' && node.tagName !== 'META' && (!node.parentElement || node.parentElement.tagName !== 'HEAD');
+          return node.nodeType === 1 && !node.isPreview && !['TITLE', 'META'].includes(node.tagName) && node.className !== 'turbolinks-progress-bar' && !(checkParentNode && !node.parentElement) && !(node.parentElement && node.parentElement.tagName === 'HEAD');
         });
       }
     }]);

@@ -11,6 +11,8 @@ export default class extends normasEvents(NormasBase) {
   terminate() {
   }
 
+  // protected
+
   constructor(options) {
     Object.assign(options, options.$el.data());
     super(options);
@@ -20,6 +22,8 @@ export default class extends normasEvents(NormasBase) {
   }
 
   destructor() {
+    this.log('info', 'construct',
+      ...this.constructor.logColor(`🏗️ "${this.instanceName}" %REPLACE%.`, 'destructing', 'red'));
     this.terminate();
     if (this.listenedEvents) {
       this.forgetEvents(this.listenedEvents);

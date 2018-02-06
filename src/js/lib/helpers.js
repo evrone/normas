@@ -28,6 +28,27 @@ export function debounce(func, wait) {
   }
 }
 
+export function groupBy(array, key) {
+  return array.reduce((grouped, item) => {
+    const groupKey = isFunction(key) ? key(item) : item[key];
+    (grouped[groupKey] || (grouped[groupKey] = [])).push(item);
+    return grouped;
+  }, {});
+}
+
+export function groupByInArray(array, key) {
+  return array.reduce((grouped, item) => {
+    const groupKey = isFunction(key) ? key(item) : item[key];
+    const group = find(grouped, ([k]) => k === groupKey);
+    if (group) {
+      group[1].push(item);
+    } else {
+      grouped.push([groupKey, [item]]);
+    }
+    return grouped;
+  }, []);
+}
+
 export function flatten(array) {
   const result = [];
   array.forEach(value => {

@@ -4,6 +4,10 @@ $.fn.each$ = function (handle) {
   });
 };
 
+$.fn.filter$ = function (handle) {
+  return this.filter((index, element) => handle($(element), index));
+};
+
 // [showOrHide[, duration[, callback]]]
 $.fn.slideToggleByState = function slideToggleByState(...a) {
   if (this.length > 0) {

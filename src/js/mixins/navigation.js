@@ -6,15 +6,17 @@ export default Base => (class extends Base {
 
   constructor(options) {
     super(options);
+    this.logging.navigation = this.constructor.readOption(options.logging, 'navigation', true);
     this.bindPageEvents(options);
-    this.log('info', `"${this.instanceName}" navigation mixin activated.`);
+    this.log('info', 'construct',
+      `🗺 "${this.instanceName}" navigation mixin activated. logging.navigation =`, this.logging.navigation);
   }
 
   bindPageEvents(options) {
     if (options.Turbolinks || global.Turbolinks) {
       const turboNormasImportPath = `normas${process.env.NODE_ENV === 'development' ? '/src/js' : ''}`;
-      this.log('warn',
-        `You have Turbolinks and can use '${turboNormasImportPath}/normasWithTurbolinks' instead 'normas'.`);
+      this.log('warn', 'construct',
+        `🗺 You have Turbolinks and can use '${turboNormasImportPath}/normasWithTurbolinks' instead 'normas'.`);
     }
     $(this.pageEnter.bind(this));
   }
@@ -45,7 +47,7 @@ export default Base => (class extends Base {
   }
 
   replaceLocation(url) {
-    this.log('`replaceLocation` works only with Turbolinks.');
+    this.log('warn', '🗺 `replaceLocation` works only with Turbolinks.');
   }
 
   pushLocation(url, title = null, state = null) {
@@ -53,22 +55,32 @@ export default Base => (class extends Base {
   }
 
   sayAboutPageLoading(state) {
-    this.log('`sayAboutPageLoading` works only with Turbolinks.');
+    this.log('warn', '🗺 `sayAboutPageLoading` works only with Turbolinks.');
   }
 
   pageEnter() {
     const $page = this.$page();
+    this.logPage('enter', $page);
     this.trigger(this.constructor.pageEnterEventName, $page);
     this.sayAboutContentEnter($page);
   }
 
   pageLeave() {
     const $page = this.$page();
+    this.logPage('leave', $page);
     this.sayAboutContentLeave($page);
     this.trigger(this.constructor.pageLeaveEventName, $page);
   }
 
   $page() {
     return this.$(this.constructor.pageSelector);
+  }
+
+  // private
+
+  logPage(logEvent, $page) {
+    const enter = logEvent === 'enter';
+    const [eventName, ...eventStyles] = this.constructor.logCycle(logEvent, enter, 10);
+    this.log('navigation', `🗺 page ${eventName}`, ...eventStyles, ...(enter ? [window.location.href] : []), $page);
   }
 });

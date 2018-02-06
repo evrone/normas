@@ -25,14 +25,14 @@ normas.listenEvents('.b-split-field', {
 normas.listenToElement(
   '.b-split-field__cell',
   $cell => {
-    console.log('>>> $cell', $cell);
+    //console.log('>>> $cell', $cell);
     if ($cell.hasClass('init-cell')) {
       console.error('$cell.hasClass(\'init-cell\')');
     }
     $cell.addClass('init-cell');
   },
   $cell => {
-    console.log('--- $cell', $cell);
+    //console.log('--- $cell', $cell);
     $cell.removeClass('init-cell');
   },
 );

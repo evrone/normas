@@ -6,13 +6,16 @@ export default Base => (class extends Base {
   bindPageEvents(options) {
     this.Turbolinks = options.Turbolinks || global.Turbolinks;
     const turbolinksExists = !!this.Turbolinks;
-      this.turbolinksEnabled = options.turbolinksEnabled === false ? false : turbolinksExists;
-    if (options.turbolinksEnabled === true && !turbolinksExists) {
-      this.error('Turbolinks: `option.turbolinksEnabled === true` but `!turbolinksExists`');
+    if (!this.enablings) this.enablings = {};
+    this.enablings.turbolinks = this.constructor.readOption(options.enablings, 'turbolinks', turbolinksExists);
+    if (this.enablings.turbolinks === true && !turbolinksExists) {
+      this.error('🛤 Turbolinks: `option.enablings.turbolinks === true` but `!turbolinksExists`');
     }
-    this.log('info', `"${this.instanceName}" Turbolinks ${this.turbolinksEnabled ? 'enabled' : 'disabled'}.`);
-
-    if (this.turbolinksEnabled) {
+    this.log('info', 'construct',
+      ...this.constructor.logColor(`🛤 "${this.instanceName}" Turbolinks %REPLACE%.`,
+        this.enablings.turbolinks ? 'enabled' : 'disabled',
+        this.enablings.turbolinks ? 'green' : 'blue'));
+    if (this.enablings.turbolinks) {
       // Turbolinks connected :)
       // patchTurbolinks(this.Turbolinks); // TODO: check versions
       patchTurbolinksPreviewControl(this.Turbolinks);
@@ -23,15 +26,16 @@ export default Base => (class extends Base {
       }
     } else {
       // No Turbolinks ;(
-      const turboNormasImportPath = `normas${process.env.NODE_ENV === 'development' ? '/src/js' : ''}`;
-      this.log('warn',
-        `You have${this.Turbolinks ? '' : 'n\'t'} Turbolinks and use '${turboNormasImportPath}/normasWithTurbolinks', but \`turbolinksEnabled === false\`. Use '${turboNormasImportPath}/normas' instead.`);
+      const turboNormasImportPath = `normas${process.env.NODE_ENV === 'development' ? '/src/js' : '/dist/js'}`;
+      this.log('warn', 'construct', `🛤 You have${this.Turbolinks ? '' : 'n\'t'} Turbolinks ` +
+        `and use '${turboNormasImportPath}/normasWithTurbolinks', but \`enablings.turbolinks === false\`. ` +
+        `Use '${turboNormasImportPath}/normas' instead.`);
       $(this.pageEnter.bind(this));
     }
   }
 
   visit(location) {
-    if (this.turbolinksEnabled) {
+    if (this.enablings.turbolinks) {
       this.Turbolinks.visit(location);
     } else {
       super.visit(location);
@@ -39,7 +43,7 @@ export default Base => (class extends Base {
   }
 
   setHash(hash) {
-    if (this.turbolinksEnabled) {
+    if (this.enablings.turbolinks) {
       let controller = this.Turbolinks.controller;
       controller.replaceHistoryWithLocationAndRestorationIdentifier(hash, controller.restorationIdentifier);
     } else {
@@ -48,7 +52,7 @@ export default Base => (class extends Base {
   }
 
   replaceLocation(url) {
-    if (this.turbolinksEnabled) {
+    if (this.enablings.turbolinks) {
       this.Turbolinks.controller.replaceHistoryWithLocationAndRestorationIdentifier(url);
     } else {
       super.replaceLocation(url);
@@ -56,7 +60,7 @@ export default Base => (class extends Base {
   }
 
   pushLocation(url) {
-    if (this.turbolinksEnabled) {
+    if (this.enablings.turbolinks) {
       this.Turbolinks.controller.pushHistoryWithLocationAndRestorationIdentifier(url);
     } else {
       super.pushLocation(url);
@@ -64,7 +68,7 @@ export default Base => (class extends Base {
   }
 
   sayAboutPageLoading(state) {
-    if (this.turbolinksEnabled) {
+    if (this.enablings.turbolinks) {
       const progressBar = this.Turbolinks.controller.adapter.progressBar;
       if (state) {
         progressBar.setValue(0);

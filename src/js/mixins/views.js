@@ -13,15 +13,15 @@ export default Base => (class extends Base {
     super(options);
     this.viewOptions = {
       debugMode: this.debugMode,
-      eventsDebug: this.eventsDebug,
+      logging: { ...this.logging },
       ...options.viewOptions,
     };
-    this.log('info', `"${this.instanceName}" navigation mixin activated.`);
+    this.log('info', 'construct', `🏭 "${this.instanceName}" views mixin activated.`);
   }
 
   registerView(viewClass, options = {}) {
     if (this.viewClasses[viewClass.selector]) {
-      this.error(`View class for selector \`${viewClass.selector}\` already registered`,
+      this.error(`🏭 View class for selector \`${viewClass.selector}\` already registered`,
         this.viewClasses[viewClass.selector]);
       return;
     }
@@ -30,7 +30,10 @@ export default Base => (class extends Base {
       viewClass.selector,
       $el => this.bindView($el, viewClass, options),
       $el => this.unbindView($el, viewClass),
-      viewClass.delay,
+      {
+        delay: viewClass.delay,
+        silent: true,
+      },
     );
   }
 
@@ -56,7 +59,7 @@ export default Base => (class extends Base {
   canBind($element, viewClass) {
     const view = this.getViewsOnElement($element, viewClass)[0];
     if (view) {
-      this.log('warn', 'Element already has bound view', $element, viewClass, view);
+      this.log('warn', '🏭 Element already has bound view', $element, viewClass, view);
       return false;
     }
     return true;

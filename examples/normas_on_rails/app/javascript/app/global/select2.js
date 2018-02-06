@@ -32,7 +32,7 @@ normas.listenToPage(() => {
   $('.select2.select2-container').remove();
 });
 
-normas.listenToElement('select', bindSelect2, unbindSelect2, 50);
+normas.listenToElement('select', bindSelect2, unbindSelect2, { delay: 50 });
 
 normas.listenEvents({
   // changeMedia: debounce(resizeSelects, 100 + 10),

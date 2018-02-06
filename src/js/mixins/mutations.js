@@ -5,11 +5,19 @@ let initialMutations = true;
 export default Base => (class extends Base {
   constructor(options) {
     super(options);
-    if (MutationObserver) {
-      this.observeMutations();
-      this.log('warn', `"${this.instanceName}" mutation observer activated. (EXPERIMENTAL feature)`);
-    } else {
-      this.log('warn', `"${this.instanceName}" mutation observer NOT DEFINED!`);
+    if (!this.enablings) this.enablings = {};
+    this.enablings.mutations = this.constructor.readOption(options.enablings, 'mutations', true);
+    this.log('info', 'construct',
+      ...this.constructor.logColor(`🤖 "${this.instanceName}" MutationObserver %REPLACE%.`,
+        this.enablings.turbolinks ? 'enabled' : 'disabled',
+        this.enablings.turbolinks ? 'green' : 'blue'));
+    if (this.enablings.mutations) {
+      if (MutationObserver) {
+        this.observeMutations();
+        this.log('construct', `🤖 "${this.instanceName}" mutation observer activated. (EXPERIMENTAL feature)`);
+      } else {
+        this.log('warn', 'construct', `🤖 "${this.instanceName}" mutation observer NOT SUPPORTED!`);
+      }
     }
   }
 
@@ -25,7 +33,7 @@ export default Base => (class extends Base {
     }
 
     const removedNodes = this.constructor.filterMutationNodes(mutation.removedNodes);
-    const addedNodes = this.constructor.filterMutationNodes(mutation.addedNodes);
+    const addedNodes = this.constructor.filterMutationNodes(mutation.addedNodes, true);
 
     if (removedNodes.length > 0) {
       this.sayAboutContentLeave($(removedNodes));
@@ -42,7 +50,7 @@ export default Base => (class extends Base {
     super.pageEnter();
   }
 
-  static filterMutationNodes(nodes) {
+  static filterMutationNodes(nodes, checkParentNode = false) {
     return Array.prototype.filter.call(nodes, node => {
       if (initialMutations) {
         node.normasInitialMutationReady = true;
@@ -52,8 +60,10 @@ export default Base => (class extends Base {
       }
       return node.nodeType === 1 &&
         !node.isPreview &&
-        node.tagName !== 'TITLE' && node.tagName !== 'META' &&
-        (!node.parentElement || node.parentElement.tagName !== 'HEAD');
+        !['TITLE', 'META'].includes(node.tagName) &&
+        node.className !== 'turbolinks-progress-bar' &&
+        !(checkParentNode && !node.parentElement) &&
+        !(node.parentElement && node.parentElement.tagName === 'HEAD');
     });
   }
 });
