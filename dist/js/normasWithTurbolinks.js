@@ -582,7 +582,7 @@ var normasEvents = (function (Base) {
 
       _this.logging.events = _this.constructor.readOption(options.logging, 'events', true);
       _this.logging.eventsDebounced = _this.constructor.readOption(options.logging, 'eventsDebounced', true);
-      _this.logging.eventsTable = _this.constructor.readOption(options.logging, 'eventsTable', true);
+      _this.logging.eventsTable = _this.constructor.readOption(options.logging, 'eventsTable', false);
       if (_this.debugMode && _this.logging.events && _this.logging.eventsDebounced) {
         _this.eventsLogBuffer = [];
         _this.logEventsDebounced = debounce(_this.logEventsDebounced.bind(_this), 20);

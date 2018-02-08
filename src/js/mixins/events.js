@@ -9,7 +9,7 @@ export default Base => (class extends Base {
     super(options);
     this.logging.events = this.constructor.readOption(options.logging, 'events', true);
     this.logging.eventsDebounced = this.constructor.readOption(options.logging, 'eventsDebounced', true);
-    this.logging.eventsTable = this.constructor.readOption(options.logging, 'eventsTable', true);
+    this.logging.eventsTable = this.constructor.readOption(options.logging, 'eventsTable', false);
     if (this.debugMode && this.logging.events && this.logging.eventsDebounced) {
       this.eventsLogBuffer = [];
       this.logEventsDebounced = debounce(this.logEventsDebounced.bind(this), 20);

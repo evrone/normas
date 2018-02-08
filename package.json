@@ -21,22 +21,23 @@
     "build": "rollup -c config/rollup.config.js"
   },
   "dependencies": {
-    "is-plain-object": "^2.0.4"
+    "is-plain-object": "~2.0.4"
   },
   "devDependencies": {
-    "babel-core": "^6.26.0",
-    "babel-plugin-external-helpers": "^6.22.0",
-    "babel-plugin-syntax-dynamic-import": "^6.18.0",
-    "babel-plugin-transform-class-properties": "^6.24.1",
-    "babel-plugin-transform-export-extensions": "^6.22.0",
-    "babel-plugin-transform-object-rest-spread": "^6.26.0",
-    "babel-preset-env": "^1.6.0",
-    "jquery": "^3.2.1",
-    "rollup": "^0.54.0",
-    "rollup-config-module": "^2.0.0",
-    "rollup-plugin-babel": "^3.0.3",
-    "rollup-plugin-commonjs": "^8.3.0",
-    "rollup-plugin-node-resolve": "^3.0.2",
-    "turbolinks": "^5.0.3"
+    "babel-core": "~6.26.0",
+    "babel-plugin-external-helpers": "~6.22.0",
+    "babel-plugin-syntax-dynamic-import": "~6.18.0",
+    "babel-plugin-transform-class-properties": "~6.24.1",
+    "babel-plugin-transform-export-extensions": "~6.22.0",
+    "babel-plugin-transform-object-rest-spread": "~6.26.0",
+    "babel-preset-env": "~1.6.0",
+    "rollup": "~0.54.0",
+    "rollup-config-module": "~2.0.0",
+    "rollup-plugin-babel": "~3.0.3",
+    "rollup-plugin-commonjs": "~8.3.0",
+    "rollup-plugin-node-resolve": "~3.0.2"
+  },
+  "peerDependencies": {
+    "jquery": "^3.0.0"
   }
 }
