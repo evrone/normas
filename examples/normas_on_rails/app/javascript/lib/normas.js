@@ -1,11 +1,11 @@
-import Normas from 'normas/dist/js/normasWithTurbolinks';
-import normasMutations from 'normas/dist/js/normasMutations';
+import Normas from 'normas';
+import normasTurbolinks from 'normas/dist/js/integrations/turbolinks';
 // import Turbolinks from 'turbolinks';
 import Turbolinks from '../../../vendor/turbolinks-debug';
 
-const NormasWithMutations = normasMutations(Normas);
+const NormasWithTurbolinks = normasTurbolinks(Normas);
 
-const normas = new NormasWithMutations({
+const normas = new NormasWithTurbolinks({
   Turbolinks,
   debugMode: process.env.NODE_ENV === 'development', // default `true`
   logging: {                  // detailed logging settings, mostly default `true`

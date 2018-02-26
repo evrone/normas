@@ -1,17 +1,17 @@
 import commonjs from 'rollup-plugin-commonjs';
 import nodeResolve from 'rollup-plugin-node-resolve';
 import babel from 'rollup-plugin-babel';
-// import memory from 'rollup-plugin-memory';
+import cleanup from 'rollup-plugin-cleanup';
 
 const bundles = [{
   name: 'normas',
   input: 'src/js/index.js',
 }, {
-  name: 'normasWithTurbolinks',
-  input: 'src/js/normasWithTurbolinks.js',
+  name: 'integrations/turbolinks',
+  input: 'src/js/mixins/turbolinks.js',
 }, {
-  name: 'normasMutations',
-  input: 'src/js/mixins/mutations.js',
+  name: 'integrations/react',
+  input: 'src/js/extensions/react.js',
 }];
 
 export default bundles.map(({ name, input }) => ({
@@ -24,14 +24,6 @@ export default bundles.map(({ name, input }) => ({
     sourcemap: true
   },
   plugins: [
-    // memory({
-    //   path: 'src/normas.js',
-    //   contents: `
-			// 	import normas from './normas';
-			// 	if (typeof module!='undefined') module.exports = normas;
-			// 	else self.normas = normas;
-			// `
-    // }),
     nodeResolve({
       // module: true,
       // jsnext: true,
@@ -45,5 +37,8 @@ export default bundles.map(({ name, input }) => ({
       exclude: 'node_modules/**',
     }),
     commonjs(),
+    cleanup({
+      maxEmptyLines: 1,
+    }),
   ]
 }));

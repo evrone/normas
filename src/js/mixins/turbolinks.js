@@ -1,3 +1,10 @@
+/*!
+ * Turbolinks integration for Normas <https://github.com/evrone/normas/blob/master/src/js/mixins/turbolinks.js>
+ *
+ * @license MIT
+ * @copyright Dmitry Karpunin <koderfunk@gmail.com>, 2017-2018
+ */
+
 // require navigation mixin
 export default Base => (class extends Base {
   static turboPageEnterEventName = 'turbolinks:load';

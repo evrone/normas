@@ -61,13 +61,11 @@ export default Base => (class extends Base {
   }
 
   replaceContent($content, $newContent) {
-    this.sayAboutContentLeave($content);
-    if ($content.length === 1) {
-      $content.replaceWith($newContent);
-    } else {
-      $newContent.insertBefore($content.first());
-      $content.remove();
+    if ($content.length > 1) {
+      $content = $content.first();
     }
+    this.sayAboutContentLeave($content);
+    $content.replaceWith($newContent);
     this.sayAboutContentEnter($newContent);
   }
 

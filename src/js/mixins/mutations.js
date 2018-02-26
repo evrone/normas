@@ -1,5 +1,3 @@
-// EXPERIMENTAL
-
 let initialMutations = true;
 
 export default Base => (class extends Base {
@@ -9,12 +7,12 @@ export default Base => (class extends Base {
     this.enablings.mutations = this.constructor.readOption(options.enablings, 'mutations', true);
     this.log('info', 'construct',
       ...this.constructor.logColor(`🤖 "${this.instanceName}" MutationObserver %REPLACE%.`,
-        this.enablings.turbolinks ? 'enabled' : 'disabled',
-        this.enablings.turbolinks ? 'green' : 'blue'));
+        this.enablings.mutations ? 'enabled' : 'disabled',
+        this.enablings.mutations ? 'green' : 'blue'));
     if (this.enablings.mutations) {
       if (MutationObserver) {
         this.observeMutations();
-        this.log('construct', `🤖 "${this.instanceName}" mutation observer activated. (EXPERIMENTAL feature)`);
+        this.log('construct', `🤖 "${this.instanceName}" mutation observer activated.`);
       } else {
         this.log('warn', 'construct', `🤖 "${this.instanceName}" mutation observer NOT SUPPORTED!`);
       }

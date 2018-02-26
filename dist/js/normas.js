@@ -12,7 +12,6 @@ $.fn.filter$ = function (handle) {
   });
 };
 
-// [showOrHide[, duration[, callback]]]
 $.fn.slideToggleByState = function slideToggleByState() {
   if (this.length > 0) {
     for (var _len = arguments.length, a = Array(_len), _key = 0; _key < _len; _key++) {
@@ -32,7 +31,6 @@ $.fn.slideToggleByState = function slideToggleByState() {
   return this;
 };
 
-// http://css-tricks.com/snippets/jquery/mover-cursor-to-end-of-textarea/
 $.fn.focusToEnd = function focusToEnd() {
   var $this = this.first();
   if ($this.is('select, :checkbox, :radio')) {
@@ -59,39 +57,26 @@ $.fn.focusTo = function focusTo(caretPos) {
   });
 };
 
-/*
- ** Returns the caret (cursor) position of the specified text field.
- ** Return value range is 0-oField.value.length.
- */
 $.fn.caretPosition = function caretPosition() {
-  // Initialize
+
   var iCaretPos = 0;
   var oField = this[0];
 
-  // IE Support
   if (document.selection) {
-    // Set focus on the element
+
     oField.focus();
-    // To get cursor position, get empty selection range
+
     var oSel = document.selection.createRange();
-    // Move selection start to 0 position
+
     oSel.moveStart('character', -oField.value.length);
-    // The caret position is selection length
+
     iCaretPos = oSel.text.length;
   } else if (oField.selectionStart != null) {
     iCaretPos = oField.selectionStart;
   }
 
-  // Return results
   return iCaretPos;
 };
-
-/*!
- * isobject <https://github.com/jonschlinkert/isobject>
- *
- * Copyright (c) 2014-2017, Jon Schlinkert.
- * Released under the MIT License.
- */
 
 var isobject = function isObject(val) {
   return val != null && typeof val === 'object' && Array.isArray(val) === false;
@@ -102,25 +87,21 @@ function isObjectObject(o) {
     && Object.prototype.toString.call(o) === '[object Object]';
 }
 
-var isPlainObject = function isPlainObject(o) {
+var isPlainObject$1 = function isPlainObject(o) {
   var ctor,prot;
 
   if (isObjectObject(o) === false) return false;
 
-  // If has modified constructor
   ctor = o.constructor;
   if (typeof ctor !== 'function') return false;
 
-  // If has modified prototype
   prot = ctor.prototype;
   if (isObjectObject(prot) === false) return false;
 
-  // If constructor does not have an Object-specific method
   if (prot.hasOwnProperty('isPrototypeOf') === false) {
     return false;
   }
 
-  // Most likely a plain Object
   return true;
 };
 
@@ -184,7 +165,30 @@ var _extends = Object.assign || function (target) {
   return target;
 };
 
+var get = function get(object, property, receiver) {
+  if (object === null) object = Function.prototype;
+  var desc = Object.getOwnPropertyDescriptor(object, property);
 
+  if (desc === undefined) {
+    var parent = Object.getPrototypeOf(object);
+
+    if (parent === null) {
+      return undefined;
+    } else {
+      return get(parent, property, receiver);
+    }
+  } else if ("value" in desc) {
+    return desc.value;
+  } else {
+    var getter = desc.get;
+
+    if (getter === undefined) {
+      return undefined;
+    }
+
+    return getter.call(receiver);
+  }
+};
 
 var inherits = function (subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
@@ -286,8 +290,6 @@ var toConsumableArray = function (arr) {
   }
 };
 
-// Sufficient for Normas implementation of functions like from lodash
-
 var isArray = Array.isArray;
 
 function isFunction(v) {
@@ -348,6 +350,8 @@ function flatten(array) {
   return result;
 }
 
+
+
 function filter(collection, conditions) {
   return filterBase('filter', collection, conditions);
 }
@@ -375,8 +379,6 @@ function without(collection) {
     return !values.includes(item);
   });
 }
-
-// private
 
 function filterBase(baseName, collection, conditions) {
   return Array.prototype[baseName].call(collection, makeConditionsMatch(conditions));
@@ -455,8 +457,6 @@ var Base = function () {
       (_constructor2 = this.constructor).log.apply(_constructor2, ['error'].concat(args));
     }
 
-    // private
-
   }], [{
     key: 'log',
     value: function log(method) {
@@ -467,7 +467,7 @@ var Base = function () {
           args[_key3 - 1] = arguments[_key3];
         }
 
-        (_console = console)[method].apply(_console, args); // eslint-disable-line no-console
+        (_console = console)[method].apply(_console, args);
       }
     }
   }, {
@@ -499,7 +499,7 @@ var Base = function () {
   }, {
     key: 'logStyle',
     value: function logStyle(template, stylingReplace, style) {
-      if (isPlainObject(stylingReplace)) {
+      if (isPlainObject$1(stylingReplace)) {
         style = stylingReplace;
         stylingReplace = null;
       }
@@ -626,8 +626,6 @@ var normasEvents = (function (Base) {
         });
       }
 
-      // private
-
     }, {
       key: 'logEvents',
       value: function logEvents($element, listeningArgs) {
@@ -692,7 +690,7 @@ var normasEvents = (function (Base) {
       value: function listeningArguments(selector, eventRule, _handle) {
         var _this3 = this;
 
-        if (isPlainObject(selector)) {
+        if (isPlainObject$1(selector)) {
           eventRule = selector;
           selector = '';
         }
@@ -703,19 +701,19 @@ var normasEvents = (function (Base) {
           selector = '';
         }
 
-        if (isPlainObject(eventRule)) {
+        if (isPlainObject$1(eventRule)) {
           return flatten(Object.keys(eventRule).map(function (key) {
             var value = eventRule[key];
-            return isPlainObject(value) ? _this3.listeningArguments(selector ? selector + ' ' + key : key, value) : _this3.listeningArguments(selector, key, value);
+            return isPlainObject$1(value) ? _this3.listeningArguments(selector ? selector + ' ' + key : key, value) : _this3.listeningArguments(selector, key, value);
           }));
         }
 
         if (!isFunction(_handle)) {
-          console.error('handle isn\'t function in listening declaration! (selector: \'' + selector + '\')'); // eslint-disable-line no-console
+          console.error('handle isn\'t function in listening declaration! (selector: \'' + selector + '\')');
           return [];
         }
         if (!eventRule) {
-          console.error('eventRule not defined! (selector: \'' + selector + '\')'); // eslint-disable-line no-console
+          console.error('eventRule not defined! (selector: \'' + selector + '\')');
           return [];
         }
 
@@ -724,7 +722,7 @@ var normasEvents = (function (Base) {
         selectors[0] = selector;
 
         if (!eventName) {
-          console.error('bad eventName in listening declaration! (selector: \'' + selector + '\')'); // eslint-disable-line no-console
+          console.error('bad eventName in listening declaration! (selector: \'' + selector + '\')');
           return [];
         }
 
@@ -745,7 +743,6 @@ var normasEvents = (function (Base) {
   }(Base);
 });
 
-// require events mixin
 var normasContent = (function (Base) {
   var _class, _temp;
 
@@ -798,7 +795,7 @@ var normasContent = (function (Base) {
       value: function sayAboutContentEnter($content) {
         $content = this.constructor.filterContent($content, 'normasEntered');
         if ($content.length > 0) {
-          // ? $content.removeClass(this.constructor.preventContentEventsClassName);
+
           this.logContent('enter', $content);
           this.trigger(this.constructor.contentEnterEventName, $content);
         }
@@ -824,17 +821,13 @@ var normasContent = (function (Base) {
     }, {
       key: 'replaceContent',
       value: function replaceContent($content, $newContent) {
-        this.sayAboutContentLeave($content);
-        if ($content.length === 1) {
-          $content.replaceWith($newContent);
-        } else {
-          $newContent.insertBefore($content.first());
-          $content.remove();
+        if ($content.length > 1) {
+          $content = $content.first();
         }
+        this.sayAboutContentLeave($content);
+        $content.replaceWith($newContent);
         this.sayAboutContentEnter($newContent);
       }
-
-      // private
 
     }, {
       key: 'logContent',
@@ -982,7 +975,6 @@ var normasContent = (function (Base) {
   }), _temp;
 });
 
-// require content mixin
 var normasNavigation = (function (Base) {
   var _class, _temp;
 
@@ -1081,8 +1073,6 @@ var normasNavigation = (function (Base) {
         return this.$(this.constructor.pageSelector);
       }
 
-      // private
-
     }, {
       key: 'logPage',
       value: function logPage(logEvent, $page) {
@@ -1114,21 +1104,99 @@ var normasNavigation = (function (Base) {
 
 var Normas = normasNavigation(normasContent(normasEvents(Base)));
 
+var initialMutations = true;
+
+var normasMutations = (function (Base) {
+  return function (_Base) {
+    inherits(_class2, _Base);
+
+    function _class2(options) {
+      classCallCheck(this, _class2);
+
+      var _this = possibleConstructorReturn(this, (_class2.__proto__ || Object.getPrototypeOf(_class2)).call(this, options));
+
+      Object.defineProperty(_this, 'checkMutations', {
+        enumerable: true,
+        writable: true,
+        value: function value(mutation) {
+          if (mutation.type !== 'childList') {
+            return;
+          }
+
+          var removedNodes = _this.constructor.filterMutationNodes(mutation.removedNodes);
+          var addedNodes = _this.constructor.filterMutationNodes(mutation.addedNodes, true);
+
+          if (removedNodes.length > 0) {
+            _this.sayAboutContentLeave($(removedNodes));
+          }
+          if (addedNodes.length > 0) {
+            _this.sayAboutContentEnter($(addedNodes));
+          }
+        }
+      });
+
+      if (!_this.enablings) _this.enablings = {};
+      _this.enablings.mutations = _this.constructor.readOption(options.enablings, 'mutations', true);
+      _this.log.apply(_this, ['info', 'construct'].concat(toConsumableArray(_this.constructor.logColor('\uD83E\uDD16 "' + _this.instanceName + '" MutationObserver %REPLACE%.', _this.enablings.mutations ? 'enabled' : 'disabled', _this.enablings.mutations ? 'green' : 'blue'))));
+      if (_this.enablings.mutations) {
+        if (MutationObserver) {
+          _this.observeMutations();
+          _this.log('construct', '\uD83E\uDD16 "' + _this.instanceName + '" mutation observer activated.');
+        } else {
+          _this.log('warn', 'construct', '\uD83E\uDD16 "' + _this.instanceName + '" mutation observer NOT SUPPORTED!');
+        }
+      }
+      return _this;
+    }
+
+    createClass(_class2, [{
+      key: 'observeMutations',
+      value: function observeMutations() {
+        var _this2 = this;
+
+        this.mutationObserver = new MutationObserver(function (mutations) {
+          return mutations.forEach(_this2.checkMutations);
+        });
+        this.mutationObserver.observe(this.$el[0], { childList: true, subtree: true });
+      }
+    }, {
+      key: 'pageEnter',
+      value: function pageEnter() {
+        if (initialMutations) {
+          initialMutations = false;
+        }
+        get(_class2.prototype.__proto__ || Object.getPrototypeOf(_class2.prototype), 'pageEnter', this).call(this);
+      }
+    }], [{
+      key: 'filterMutationNodes',
+      value: function filterMutationNodes(nodes) {
+        var checkParentNode = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
+
+        return Array.prototype.filter.call(nodes, function (node) {
+          if (initialMutations) {
+            node.normasInitialMutationReady = true;
+            if (node.parentElement && node.parentElement.normasInitialMutationReady) {
+              return false;
+            }
+          }
+          return node.nodeType === 1 && !node.isPreview && !['TITLE', 'META'].includes(node.tagName) && node.className !== 'turbolinks-progress-bar' && !(checkParentNode && !node.parentElement) && !(node.parentElement && node.parentElement.tagName === 'HEAD');
+        });
+      }
+    }]);
+    return _class2;
+  }(Base);
+});
+
 var _class = function (_normasEvents) {
   inherits(_class, _normasEvents);
   createClass(_class, [{
     key: 'initialize',
 
-    // Override it with your own initialization logic (like componentDidUnmount in react).
     value: function initialize(options) {}
-
-    // Override it with your own unmount logic (like componentWillUnmount in react).
 
   }, {
     key: 'terminate',
     value: function terminate() {}
-
-    // protected
 
   }]);
 
@@ -1184,16 +1252,13 @@ var _class = function (_normasEvents) {
       var _this3 = this;
 
       return mapValues(events, function (handle) {
-        return isString(handle) ? _this3[handle].bind(_this3) : _typeof(isPlainObject(handle)) ? _this3.linkEvents(handle) : handle;
+        return isString(handle) ? _this3[handle].bind(_this3) : _typeof(isPlainObject$1(handle)) ? _this3.linkEvents(handle) : handle;
       });
     }
   }]);
   return _class;
 }(normasEvents(Base));
 
-// TODO: may be rename Views, views, View, view
-// require content mixin
-// require events mixin
 var normasViews = (function (Base) {
   return function (_Base) {
     inherits(_class2, _Base);
@@ -1328,7 +1393,14 @@ var normasViews = (function (Base) {
   }(Base);
 });
 
-var index = normasViews(Normas);
+/*!
+ * Normas <https://github.com/evrone/normas>
+ *
+ * @license MIT
+ * @copyright Dmitry Karpunin <koderfunk@gmail.com>, 2017-2018
+ */
+
+var index = normasViews(normasMutations(Normas));
 
 module.exports = index;
 //# sourceMappingURL=normas.js.map

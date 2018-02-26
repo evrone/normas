@@ -61,6 +61,20 @@ export function flatten(array) {
   return result;
 }
 
+export function deepMerge(destination, source) {
+  const result = Object.assign({}, destination);
+  Object.keys(source).forEach(key => {
+    if (source[key]) {
+      if (isPlainObject(destination[key]) && isPlainObject(source[key])) {
+        result[key] = deepMerge(destination[key], source[key]);
+      } else {
+        result[key] = source[key];
+      }
+    }
+  });
+  return result;
+}
+
 export function filter(collection, conditions) {
   return filterBase('filter', collection, conditions);
 }

@@ -1,6 +1,6 @@
 # Normas ![stability-stable](https://img.shields.io/badge/stability-stable-green.svg) ![npm](https://img.shields.io/npm/v/normas.svg)
 
-Normal Lightweight Javascript Framework for server-side render (compatible with Turbolinks)
+Normal Lightweight Javascript Framework for server-side render
 
 At the moment, the project is in the stage of active development and will be ready for production in early 2018.
 Now you can clone this repo and try [example with Rails](examples/normas_on_rails).
@@ -31,15 +31,20 @@ Feel free to start watching and star project in order not miss the release or up
 * [Navigation](#navigation)
 * [Views](#views)
 * [Debugging](#debugging)
-* [Useful shortcuts](#useful-shortcuts)
+* [Helpers](#helpers)
 * [Integrations](#integrations)
+  * [Turbolinks integration](#turbolinks-integration)
+  * [React.js integration](#react-js-integration)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 
 ## Philosophy
 
-A lot of people in the world have done, are doing and will do in the future multi-page applications.
+A lot of people in the world have done, are doing and will do in the future
+[multi-page applications](https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Web_frameworks#A_few_good_web_frameworks)
+on Ruby on Rails, Phoenix, Express, Django, Flask, ASP.NET etc.
 This is a fairly stable approach for medium and serious applications with advanced business logic.
+
 But developers constantly have a headache when try organizing a big-app for thin client.
 Collisions between the scripts and callback-hell, causes people to seek refuge in the new hyped "frameworks",
 But they require a more complex organization of the application code
@@ -98,6 +103,9 @@ Normas does not limit file structure organization,
 but it is strongly recommended to split app-logic into separate files
 and group them into folders according to functionality.
 
+In all examples, Normas instance called `normas`, but if you call it `app`, you'll be dead right!
+There is everything to ensure that your app-code does not crack at the seams.
+
 ## Events listening
 
 ### `listenEvents`
@@ -154,7 +162,7 @@ const listeningArgs = normas.listenEventsOnElement($myElement, {
 ```js
 normas.listenEvents('cart:update', (itemId, amount) => ...);
 ...
-normas.trigger('cart:update', itemId, amount); // Unlike jQuery `.trigger('cart:update', [itemId, amount])`
+normas.trigger('cart:update', itemId, amount); // unlike jQuery `.trigger('cart:update', [itemId, amount])`
 ```
 
 ### Events logging
@@ -164,7 +172,7 @@ started with a difference of less than 20ms
 and displays in batches as soon as events cease to be registered.
 There is a way to enable synchronous logging: the option `logging: { eventsDebounced: false }`.
 If you need a more visible list of events, use option `logging: { eventsTable: true }`.
-Full list of logging options see in [Debugging section](#debugging).
+Full list of logging options see in [Debugging](#debugging) section.
 
 ## Content control
 
@@ -214,21 +222,27 @@ Options:
 
 #### Mutation Observer
 
-*A few words about mutations...* **Currently mutations mixin in experimental state!**
+Currently, [Mutation Observer](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
+is enabled by default and is used to track changes in the DOM tree.
+You can turn it off using option when construct your normas instance
+and go into the manual content control mode.
+This will require more care in your content management code.
+
 ```js
-import Normas from 'normas/dist/normasWithTurbolinks';
-import normasMutations from 'normas/dist/normasMutations';
-import Turbolinks from 'turbolinks';
-
-const NormasWithMutations = normasMutations(Normas);
-
-export default new NormasWithMutations({
-  Turbolinks,
-  debugMode: process.env.NODE_ENV === 'development', // default `true`
+export default new Normas({
+  ...
+  enablings: {
+    mutations: false,
+  },
+  ...
 });
 ```
 
 #### Manual content broadcasting
+
+If you make app for IE <= 10, I sympathize with you. 
+Mutation Observer not work for some part of your users.   
+You must use Manual content broadcasting when manipulate DOM-tree.
 
 For broadcast events about content life use `sayAboutContentEnter` and `sayAboutContentLeave`:
 ```js
@@ -323,10 +337,26 @@ export default new Normas({
 });
 ```
 
-## Useful shortcuts
+## Helpers
+
+Normas has built-in helpers, which he uses to create magic. 
+You can use them in your code, and in some cases reduce the included code.
+
++ `compact(array)`
++ `debounce(func, wait)`
++ `groupBy(array, key)`
++ `groupByInArray(array, key)`
++ `flatten(array)`
++ `deepMerge(destination, source)`
++ `filter(collection, conditions)`
++ `find(collection, conditions)`
+
+### jQuery additions
+
+Built-in jQuery `$.fn.*` helpers:
 
 ```js
-$('.some-selector')
+$someElement
   .filter$($element => $element.data('inMemoryData') )
   .filter('.jquery-chain')
   .each((index, element) => { $(element).addClass(`.jquery-too_${index}`); })
@@ -335,11 +365,60 @@ $('.some-selector')
 
 ## Integrations
 
-Coming soon...
+### Turbolinks integration
+
+For integration with Turbolinks you need use extended Normas class
+and [construct instance](#installation) with your Turbolinks instance:
+```js
+import Normas from 'normas';
+import normasTurbolinks from 'normas/dist/js/integrations/turbolinks';
+import Turbolinks from 'turbolinks';
+
+const NormasWithTurbolinks = normasTurbolinks(Normas);
+
+const normas = new NormasWithTurbolinks({
+  Turbolinks,
+  enablings: {
+    // turbolinks: false, // you can disable Turbolinks integration
+  },
+);
+
+export default normas;
+```
+
+### React.js integration
+
+Just import integration module and use it:
+```js
+import normasReact from 'normas/dist/js/integrations/react';
+import normas from 'lib/normas'; // or may be you use global Normas instance
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import ComponentA from 'components/ComponentA';
+import ComponentB from 'components/ComponentB';
+
+normasReact({ normas, React, ReactDOM }, {
+  ComponentA,
+  ComponentB,
+});
+```
+
+If you want to understand the mechanism, or realize your own, look at the [source](src/js/extensions/react.js).
+
+If you use Ruby on Rails, you can define in your `app/helpers/*_helper.rb`:
+
+```ruby
+  def react_component(component_name, props = nil)
+    content_tag :div, '', data: { react_component: component_name, props: props }
+  end
+ ```
+
+***To be continued...***
 
 ## Roadmap
 
-- More readme and documentation
+- More documentation
 - More examples of usage with actual javascript plugins and libs
 - Improve code style and quality
 - Improve debugging

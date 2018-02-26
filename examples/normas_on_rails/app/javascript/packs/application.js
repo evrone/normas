@@ -12,3 +12,4 @@ import 'app/global/select2';
 import 'app/global/popover';
 
 import 'app/player';
+import 'app/components';
