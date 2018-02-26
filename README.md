@@ -34,7 +34,7 @@ Feel free to start watching and star project in order not miss the release or up
 * [Helpers](#helpers)
 * [Integrations](#integrations)
   * [Turbolinks integration](#turbolinks-integration)
-  * [React.js integration](#react-js-integration)
+  * [React.js integration](#reactjs-integration)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 
