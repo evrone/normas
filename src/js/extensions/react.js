@@ -1,11 +1,11 @@
-/*!
- * React integration for Normas <https://github.com/evrone/normas/blob/master/src/js/extensions/react.js>
+/**
+ * React integration for Normas
  *
+ * @see {@link https://github.com/evrone/normas#reactjs-integration|Docs}
+ * @see {@link https://github.com/evrone/normas/blob/master/src/js/extensions/react.js|Source}
  * @license MIT
  * @copyright Dmitry Karpunin <koderfunk@gmail.com>, 2017-2018
  */
-
-import { deepMerge } from '../lib/helpers';
 
 const defaults = {
   selector: '[data-react-component]',
@@ -13,7 +13,7 @@ const defaults = {
 };
 
 export default function({ normas, React, ReactDOM }, components, options = {}) {
-  const { selector, listenOptions } = deepMerge(defaults, options);
+  const { selector, listenOptions } = normas.helpers.deepMerge(defaults, options);
 
   normas.listenToElement(
     selector,

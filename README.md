@@ -1,44 +1,47 @@
-# Normas ![stability-stable](https://img.shields.io/badge/stability-stable-green.svg) ![npm](https://img.shields.io/npm/v/normas.svg)
+# Normas [![stability](https://img.shields.io/badge/stability-stable-green.svg)](#normas----) [![npm](https://img.shields.io/npm/v/normas.svg)](https://www.npmjs.com/package/normas) [![gzip size](http://img.badgesize.io/https://unpkg.com/normas/dist/js/normas.js?compression=gzip)](https://unpkg.com/normas/dist/js/normas.js) [![dependencies](https://david-dm.org/evrone/normas.svg)](https://david-dm.org/evrone/normas)
 
 Normal Lightweight Javascript Framework for server-side render
 
 At the moment, the project is in the stage of active development and will be ready for production in early 2018.
 Now you can clone this repo and try [example with Rails](examples/normas_on_rails).
 
-Feel free to start watching and star project in order not miss the release or updates.
+Feel free to start watching and ⭐ project in order not miss the release or updates.
 
 <a href="https://evrone.com/?utm_source=normas">
   <img src="https://user-images.githubusercontent.com/417688/34437029-dbfe4ee6-ecab-11e7-9d80-2b274b4149b3.png"
-       alt="Sponsored by Evrone" width="308">
+       alt="Sponsored by Evrone" width="231">
 </a>
 
 ## Table of Contents
 
-* [Philosophy](#philosophy)
-* [Installation](#installation)
-* [Usage and project structure](#usage-and-project-structure)
-* [Events listening](#events-listening)
+* ✨ [Philosophy](#-philosophy)
+* 🏗 [Installation](#-installation)
+* 🛠 [Usage and project structure](#-usage-and-project-structure)
+* 🚦 [Events listening](#-events-listening)
   * [`listenEvents`](#listenevents)
   * [`listenEventsOnElement`](#listeneventsonelement)
   * [`forgetEvents` && `forgetEventsOnElement`](#forgetevents--forgeteventsonelement)
   * [`trigger`](#trigger)
   * [Events logging](#events-logging)
-* [Content control](#content-control)
-  * [Content listening](#content-listening)
-  * [Content broadcasting](#content-broadcasting)
-    * [Mutation Observer](#mutation-observer)
-    * [Manual content broadcasting](#manual-content-broadcasting)
-* [Navigation](#navigation)
-* [Views](#views)
-* [Debugging](#debugging)
-* [Helpers](#helpers)
-* [Integrations](#integrations)
+* 🛂 [Content control](#-content-control)
+  * 👂 [Content listening](#-content-listening)
+    * 💎 [`listenToElement`](#-listentoelement)
+    * 📰 [`listenToContent`](#-listentocontent)
+    * 🗺 [`listenToPage`](#-listentopage)
+  * 📣 [Content broadcasting](#-content-broadcasting)
+    * 🤖 [Mutation Observer](#-mutation-observer)
+    * 🙌 [Manual content broadcasting](#-manual-content-broadcasting)
+* 🗺 [Navigation](#-navigation)
+* 🏭 [Views](#-views)
+* 🔦 [Debugging](#-debugging)
+* ⚙ [Helpers](#-helpers)
+* 🔌 [Integrations](#-integrations)
   * [Turbolinks integration](#turbolinks-integration)
   * [React.js integration](#reactjs-integration)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
+* 📝 [Roadmap](#-roadmap)
+* 🤝 [Contributing](#-contributing)
 
-## Philosophy
+## ✨ Philosophy
 
 A lot of people in the world have done, are doing and will do in the future
 [multi-page applications](https://developer.mozilla.org/en-US/docs/Learn/Server-side/First_steps/Web_frameworks#A_few_good_web_frameworks)
@@ -59,12 +62,13 @@ Your application can not be distinguished from a SPA/PWA.
 It does not oblige to avoid [React.js](https://reactjs.org/), [Vue.js](https://vuejs.org/) etc libs.
 You can use them partially,
 for interactive fragments in the form that they are just one of the custom components.
-Read more in the [Integrations](#integrations) section.
+Read more in the [Integrations](#-integrations) section.
 
-## Installation
+## 🏗 Installation
 
 Your application can use the [`normas` npm package](https://www.npmjs.com/package/normas)
-to install Normas as a module for build with tools like [webpack](http://webpack.github.io/).
+to install Normas as a module for build with tools like
+[webpack](https://webpack.github.io/) or [rollup](https://rollupjs.org/).
 
 1. Add the `normas` package to your application: `yarn add normas` or `npm install --save normas`.
 2. Create your `normas.js` instance module (ex in your `js/lib`)
@@ -82,12 +86,14 @@ export default new Normas({
 });
 ```
 
-Full list of logging options see in [Debugging section](#debugging).
+Full list of logging options see in [Debugging section](#-debugging).
 
-## Usage and project structure
+## 🛠 Usage and project structure
 
-In 90% of cases, it is sufficient to use two methods: `normas.listenEvents` and `normas.listenToElement`.
-Also, for organizing more complex widgets, there is [Views-system](#views).
+In 90% of cases, it is sufficient to use two methods:
+[`normas.listenEvents`](#listenevents) and
+[`normas.listenToElement`](#-listentoelement).
+Also, for organizing more complex widgets, there is [Views-system](#-views).
 All you need to do is import your `normas` instance
 and use it for all event bindings and content-flow.
 
@@ -106,7 +112,7 @@ and group them into folders according to functionality.
 In all examples, Normas instance called `normas`, but if you call it `app`, you'll be dead right!
 There is everything to ensure that your app-code does not crack at the seams.
 
-## Events listening
+## 🚦 Events listening
 
 ### `listenEvents`
 
@@ -172,37 +178,18 @@ started with a difference of less than 20ms
 and displays in batches as soon as events cease to be registered.
 There is a way to enable synchronous logging: the option `logging: { eventsDebounced: false }`.
 If you need a more visible list of events, use option `logging: { eventsTable: true }`.
-Full list of logging options see in [Debugging](#debugging) section.
+Full list of logging options see in [Debugging](#-debugging) section.
 
-## Content control
+## 🛂 Content control
 
-### Content listening
+### 👂 Content listening
 
-Don't use DOM-ready-like wrapping (like `$(() => { ... });`),
+**Don't use DOM-ready-like wrapping (like `$(() => { ... });`)**,
 because app may use [Turbolinks](https://github.com/turbolinks/turbolinks) + many dynamic components.
 
-If something needs to be done when enter or/and leave the page (navigation,
-ie, the processing does not need randomly appearing in the content, such as popup),
-you can wrap in a `listenToPage([enter][, leave])`:
-```js
-normas.listenToPage(
-  $page => { /* page ready or body replaced by Turbolinks */ },
-  $page => { /* page prepare to cache and disappearing */ }
-);
-```
+#### 💎 `listenToElement`
 
-If there is something to do with the appearance of content,
-whether it's walking through the pages, or processing of the content appearing,
-you need to turn in `listenToContent([enter][, leave])`:
-```js
-normas.listenToContent(
-  $content => { /* $content already in DOM in this callback */ },
-  $content => { /* $content disappear after this callback */ }
-);
-```
-where second callback (on leave content) not necessary.
-
-Next level of content listening is `listenToElement(elementSelector, enter[, leave = null][, { delay: 0 }])`:
+Top level of content listening is `listenToElement(elementSelector, enter[, leave = null][, { delay: 0 }])`:
 ```js
 normas.listenToElement('.js-element',
   $element => { /* $element already in DOM in this callback */ },
@@ -216,11 +203,37 @@ normas.listenToElement('.js-element',
 
 Options:
   - `delay: Number` Delay in milliseconds from detect new element to fire `enter`.
-  If content disappears before `delay`, `enter` will not fire.
+    If content disappears before `delay`, `enter` will not fire.
+  - `silent: Boolean` Mute events logging.
 
-### Content broadcasting
+#### 📰 `listenToContent`
 
-#### Mutation Observer
+If there is something to do with the appearance of content,
+whether it's walking through the pages, or processing of the content appearing,
+you need to turn in `listenToContent([enter][, leave])`:
+```js
+normas.listenToContent(
+  $content => { /* $content already in DOM in this callback */ },
+  $content => { /* $content disappear after this callback */ }
+);
+```
+where second callback (on leave content) not necessary.
+
+#### 🗺 `listenToPage`
+
+If something needs to be done when enter or/and leave the page (navigation,
+ie, the processing does not need randomly appearing in the content, such as popup),
+you can wrap in a `listenToPage([enter][, leave])`:
+```js
+normas.listenToPage(
+  $page => { /* page ready or body replaced by Turbolinks */ },
+  $page => { /* page prepare to cache and disappearing */ }
+);
+```
+
+### 📣 Content broadcasting
+
+#### 🤖 Mutation Observer
 
 Currently, [Mutation Observer](https://developer.mozilla.org/en-US/docs/Web/API/MutationObserver)
 is enabled by default and is used to track changes in the DOM tree.
@@ -238,10 +251,10 @@ export default new Normas({
 });
 ```
 
-#### Manual content broadcasting
+#### 🙌 Manual content broadcasting
 
 If you make app for IE <= 10, I sympathize with you. 
-Mutation Observer not work for some part of your users.   
+Mutation Observer not work for some part of your users.
 You must use Manual content broadcasting when manipulate DOM-tree.
 
 For broadcast events about content life use `sayAboutContentEnter` and `sayAboutContentLeave`:
@@ -262,7 +275,7 @@ normas.replaceContentInner($container, content);
 normas.replaceContent($content, $newContent);
 ```
 
-## Navigation
+## 🗺 Navigation
 
 - `visit(location)`
 - `refreshPage()`
@@ -272,11 +285,43 @@ normas.replaceContent($content, $newContent);
 - `pushLocation(url)`
 - `sayAboutPageLoading(state)`
 
-## Views
+## 🏭 Views
 
 If you like organize some instantiated code into classes, likeness Evrobone/Backbone-view,
-for this there is an analog in the Normas.
+for this there is an analog in the Normas, but only very powerful and convenient.
 
+For use in project, you will need to [construct app-instance](#-installation) from extended Normas-class:
+```js
+import Normas from 'normas';
+import normasViews from 'normas/dist/js/extensions/views';
+
+const NormasWithViews = normasViews(Normas);
+
+const normas = new NormasWithViews({
+  logging: {
+    construct: false,
+  },
+  viewOptions: {
+    logging: {
+      construct: true,
+    },
+  }
+);
+
+export default normas;
+```
+
+Then make some `html`:
+```html
+<div class="b-my-player" data-media-url="https://media.url/">
+  <i class="b-my-player__full-screen"></i>
+  <div class="b-my-player__playback-controls">
+    <i class="b-my-player__play"></i>
+  </div>
+</div>
+```
+
+Make your own views like this and cooler! ✨
 ```js
 import normas from 'lib/normas';
 
@@ -284,6 +329,9 @@ import normas from 'lib/normas';
 class MyPlayer extends normas.View {
   // Define selector for binding, like `el: '.b-my-player'` in Evrobone.
   static selector = '.b-my-player';
+
+  // List of options that will be exposed to properties of view-instance.
+  static reflectOptions = ['mediaUrl'];
 
   // Events notation compliant with `listenEvents`
   static events = {
@@ -306,7 +354,7 @@ class MyPlayer extends normas.View {
   }
 
   play() {
-    alert('Play!');
+    alert(`Play! ${this.mediaUrl}`);
   }
 }
 
@@ -314,7 +362,7 @@ class MyPlayer extends normas.View {
 normas.registerView(MyPlayer);
 ```
 
-## Debugging
+## 🔦 Debugging
 
 The installation section describes that you are making your own application instance,
 which can be configured with logging options.
@@ -326,18 +374,37 @@ export default new Normas({
   debugMode: process.env.NODE_ENV === 'development', // default `true`
   // logging works only when `debugMode === true`
   logging: {                  // detailed logging settings, mostly default `true`
+    // Core level options
+    hideInstancesOf: [],      // list of constructors whose instances will be muted, ex: [Element, $, Normas.View, Normas]
     construct: true,          // logs about constructing
+    constructGrouping: true,  // group logging about constructing
     events: true,             // logs about events listening
-    eventsDebounced: true,    //
-    eventsTable: false,       // logs events subscriptions info as table, default `false`, because massive
-    element: true,            // logs about element enter and leave
+    eventsDebounced: true,    // events collect in debounced by 20ms batches
+    eventsTable: false,       // events subscriptions info as table, default `false`, because massive
+    // App level options
+    elements: true,           // logs about element enter and leave
     content: false,           // logs about content enter and leave, default `false`, because noisy
+    contentGrouping: true,    // group logging under content lifecycle
     navigation: true,         // logs in navigation mixin (page events)
+    navigationGrouping: true, // group logging under page events
   },
 });
 ```
 
-## Helpers
+All `*Grouping` properties can be a string `'groupCollapsed'`.
+
+There are special versions of bundles (`normas/js/dist/**/*.production`) for the size-paranoids,
+in which debugging and logging is removed.
+Size of production version of main bundle is less than 4 kB!
+[![gzip size](http://img.badgesize.io/https://unpkg.com/normas/dist/js/normas.production.js?compression=gzip)](https://unpkg.com/normas/dist/js/normas.production.js)
+
+```js
+import Normas from 'normas/dist/js/normas.production';
+import normasViews from 'normas/dist/js/extensions/views.production';
+export default new normasViews(Normas);
+```
+
+## ⚙ Helpers
 
 Normas has built-in helpers, which he uses to create magic. 
 You can use them in your code, and in some cases reduce the included code.
@@ -363,12 +430,12 @@ $someElement
   .each$(($element, index) => { $element.removeClass(`.jquery-too_${index}`); });
 ```
 
-## Integrations
+## 🔌 Integrations
 
 ### Turbolinks integration
 
 For integration with Turbolinks you need use extended Normas class
-and [construct instance](#installation) with your Turbolinks instance:
+and [construct instance](#-installation) with your Turbolinks instance:
 ```js
 import Normas from 'normas';
 import normasTurbolinks from 'normas/dist/js/integrations/turbolinks';
@@ -416,7 +483,7 @@ If you use Ruby on Rails, you can define in your `app/helpers/*_helper.rb`:
 
 ***To be continued...***
 
-## Roadmap
+## 📝 Roadmap
 
 - More documentation
 - More examples of usage with actual javascript plugins and libs
@@ -426,7 +493,7 @@ If you use Ruby on Rails, you can define in your `app/helpers/*_helper.rb`:
 - Example on node.js with Express.js
 - Tests
 
-## Contributing
+## 🤝 Contributing
 
 If you want to get involved, please do so by
 [creating issues](https://github.com/evrone/normas/issues/new) or submitting pull requests.

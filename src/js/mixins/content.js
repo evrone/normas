@@ -3,28 +3,20 @@ export default Base => (class extends Base {
   static contentEnterEventName = 'content:enter';
   static contentLeaveEventName = 'content:leave';
 
-  static preventContentEventsClassName = 'js-prevent-normas';
-  static elementEnterTimeoutIdDataName = 'elementEnterTimeoutId';
-
   constructor(options) {
     super(options);
-    Object.assign(this.logging, {
-      content: this.constructor.readOption(options.logging, 'content', false),
-      element: this.constructor.readOption(options.logging, 'element', true),
-    });
-    this.log('info', 'construct',
-      `📰 "${this.instanceName}" content mixin activated.`,
-      'logging.content =', this.logging.content,
-      'logging.element =', this.logging.element);
+    if (NORMAS_DEBUG) {
+      this.constructor.readOptions(this.logging, options.logging, {
+        content: false,
+        contentGrouping: true,
+      });
+      this.log('info', 'construct',
+        `📰 "${this.instanceName}" content mixin activated.`,
+        'logging.content =', this.logging.content);
+    }
   }
 
-  listenToElement(selector, enter, leave = null, options = {}) {
-    const delay = options.delay || 0;
-    const silent = options.silent || false;
-    const contentEnter = this.constructor.makeElementContentEnter(this, selector, enter, delay, silent);
-    const contentLeave = this.constructor.makeElementContentLeave(this, selector, leave, delay, silent);
-    this.listenToContent(contentEnter, contentLeave);
-  }
+  // subscription to content lifecycle
 
   listenToContent(enter, leave = null) {
     if (enter) {
@@ -35,24 +27,33 @@ export default Base => (class extends Base {
     }
   }
 
+  // manual content broadcasting
+
   sayAboutContentEnter($content) {
-    $content = this.constructor.filterContent($content, 'normasEntered');
+    return this.sayAboutContentMove('enter', this.constructor.contentEnterEventName, $content);
+  }
+
+  sayAboutContentLeave($content) {
+    return this.sayAboutContentMove('leave', this.constructor.contentLeaveEventName, $content);
+  }
+
+  // private
+  sayAboutContentMove(move, eventName, $content) {
+    const enter = move === 'enter';
+    $content = this.constructor.filterContent($content, (enter ? 'normasEntered' : 'normasLeft'), enter);
     if ($content.length > 0) {
-      // ? $content.removeClass(this.constructor.preventContentEventsClassName);
-      this.logContent('enter', $content);
-      this.trigger(this.constructor.contentEnterEventName, $content);
+      if (NORMAS_DEBUG) {
+        this.logContent(move, $content);
+      }
+      this.trigger(eventName, $content);
+      if (NORMAS_DEBUG && this.logging.contentGrouping) {
+        this.log('groupEnd', 'content');
+      }
     }
     return $content;
   }
 
-  sayAboutContentLeave($content) {
-    $content = this.constructor.filterContent($content, 'normasLeft');
-    if ($content.length > 0) {
-      this.logContent('leave', $content);
-      this.trigger(this.constructor.contentLeaveEventName, $content);
-    }
-    return $content;
-  }
+  // helpers
 
   replaceContentInner($container, content) {
     this.sayAboutContentLeave($container);
@@ -72,91 +73,24 @@ export default Base => (class extends Base {
   // private
 
   logContent(logEvent, $content) {
-    const [eventName, ...eventStyles] = this.constructor.logCycle(logEvent, logEvent === 'enter');
+    if (!NORMAS_DEBUG) {
+      return;
+    }
+    const [eventName, ...eventStyles] = this.constructor.logCycle(logEvent, logEvent === 'enter', 5);
     const [contentName, ...contentStyles] = this.constructor.logBold(this.constructor.contentName($content));
-    this.log('content',
+    this.log(this.constructor.groupingMethod(this.logging.contentGrouping), 'content',
       `📰 content ${eventName} "${contentName}"`,
       ...eventStyles, ...contentStyles,
       $content);
   }
 
-  static makeElementContentEnter(instance, selector, enter, delay, silent) {
-    return $content => {
-      const $elements = this.contentElements($content, selector);
-      if ($elements.length === 0) {
-        return;
-      }
-      if (delay > 0) {
-        $elements.data(this.elementEnterTimeoutIdDataName, setTimeout(() => {
-          const $delayedElements = this.contentElements($content, $elements);
-          $delayedElements.removeData(this.elementEnterTimeoutIdDataName);
-          this.handleElements(instance, $delayedElements, selector, enter, 'enter', silent);
-        }, delay));
-      } else {
-        this.handleElements(instance, $elements, selector, enter, 'enter', silent);
-      }
-    };
-  }
-
-  static makeElementContentLeave(instance, selector, leave, delay, silent) {
-    if (!leave) {
-      return null;
-    }
-    return $content => {
-      let $elements = this.contentElements($content, selector);
-      if ($elements.length === 0) {
-        return;
-      }
-      if (delay > 0) {
-        $elements = $elements.filter$($element => !$element.data(this.elementEnterTimeoutIdDataName));
-      }
-      if ($elements.length === 0) {
-        return;
-      }
-      this.handleElements(instance, $elements, selector, leave, 'leave', silent);
-    };
-  }
-
-  static handleElements(instance, $elements, selector, handle, handleName, silent) {
-    $elements.each$($element => {
-      const prevent = this.preventEventForElement($element);
-      if (!silent) {
-        let preventInfo, styledHandleName, handleStyles;
-        const [elementName, ...elementStyles] = this.logBold(selector);
-        if (prevent) {
-          [preventInfo, ...handleStyles] = this.logColor('prevent ', 'blue');
-          styledHandleName = handleName;
-        } else {
-          preventInfo = '';
-          [styledHandleName, ...handleStyles] = this.logCycle(handleName, handleName === 'enter', 3);
-        }
-        instance.log('element',
-          `💎 ${preventInfo}element ${styledHandleName} "${elementName}"`,
-          ...handleStyles, ...elementStyles,
-          $element);
-      }
-      if (!prevent) {
-        handle($element);
-      }
-    });
-  }
-
-  static contentElements($content, selector) {
-    return $content.filter(selector).add($content.find(selector));
-  }
-
-  static preventEventForElement($element) {
-    return $element.closest(`.${this.preventContentEventsClassName}`).length > 0;
-  }
-
-  static filterContent($content, elementFlagName) {
+  static filterContent($content, elementFlagName, checkParentElement = false) {
     return $content.filter((_index, element) => {
-      if (element[elementFlagName]) {
+      if (element[elementFlagName] || (checkParentElement && !element.parentElement)) {
         return false;
-      } else {
-        element[elementFlagName] = true;
-        return true;
       }
+      element[elementFlagName] = true;
+      return true;
     });
   }
 });

@@ -1,6 +1,8 @@
-/*!
- * Turbolinks integration for Normas <https://github.com/evrone/normas/blob/master/src/js/mixins/turbolinks.js>
+/**
+ * Turbolinks integration for Normas
  *
+ * @see {@link https://github.com/evrone/normas#turbolinks-integration|Docs}
+ * @see {@link https://github.com/evrone/normas/blob/master/src/js/mixins/turbolinks.js|Source}
  * @license MIT
  * @copyright Dmitry Karpunin <koderfunk@gmail.com>, 2017-2018
  */
@@ -14,14 +16,17 @@ export default Base => (class extends Base {
     this.Turbolinks = options.Turbolinks || global.Turbolinks;
     const turbolinksExists = !!this.Turbolinks;
     if (!this.enablings) this.enablings = {};
-    this.enablings.turbolinks = this.constructor.readOption(options.enablings, 'turbolinks', turbolinksExists);
-    if (this.enablings.turbolinks === true && !turbolinksExists) {
-      this.error('🛤 Turbolinks: `option.enablings.turbolinks === true` but `!turbolinksExists`');
+    this.constructor.readOptions(this.enablings, options.enablings, { turbolinks: turbolinksExists });
+    if (NORMAS_DEBUG && options.enablings && options.enablings.turbolinks === true && !turbolinksExists) {
+      this.error('🛤 Turbolinks: `options.enablings.turbolinks === true` but Turbolinks is not detected.',
+        this.constructor.readmeLink('turbolinks-integration'));
     }
-    this.log('info', 'construct',
-      ...this.constructor.logColor(`🛤 "${this.instanceName}" Turbolinks %REPLACE%.`,
-        this.enablings.turbolinks ? 'enabled' : 'disabled',
-        this.enablings.turbolinks ? 'green' : 'blue'));
+    if (NORMAS_DEBUG) {
+      this.log('info', 'construct',
+        ...this.constructor.logColor(`🛤 "${this.instanceName}" Turbolinks %REPLACE%.`,
+          this.enablings.turbolinks ? 'enabled' : 'disabled',
+          this.enablings.turbolinks ? 'green' : 'blue'));
+    }
     if (this.enablings.turbolinks) {
       // Turbolinks connected :)
       // patchTurbolinks(this.Turbolinks); // TODO: check versions
@@ -33,10 +38,10 @@ export default Base => (class extends Base {
       }
     } else {
       // No Turbolinks ;(
-      const turboNormasImportPath = `normas${process.env.NODE_ENV === 'development' ? '/src/js' : '/dist/js'}`;
-      this.log('warn', 'construct', `🛤 You have${this.Turbolinks ? '' : 'n\'t'} Turbolinks ` +
-        `and use '${turboNormasImportPath}/normasWithTurbolinks', but \`enablings.turbolinks === false\`. ` +
-        `Use '${turboNormasImportPath}/normas' instead.`);
+      if (NORMAS_DEBUG && options.enablings && options.enablings.turbolinks === false) {
+        this.log('warn', 'construct',
+          `🛤 You ${this.Turbolinks ? '' : 'do not '}have a Turbolinks and use integration, but \`options.enablings.turbolinks === false\`.`);
+      }
       $(this.pageEnter.bind(this));
     }
   }

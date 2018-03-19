@@ -1,6 +1,16 @@
 // Sufficient for Normas implementation of functions like from lodash
 
-export isPlainObject from 'is-plain-object';
+export function isPlainObject(value) {
+  if (value == null || typeof value !== 'object') {
+    return false;
+  }
+  const proto = Object.getPrototypeOf(value);
+  if (proto === null) {
+    return true;
+  }
+  const constructor = Object.prototype.hasOwnProperty.call(proto, 'constructor') && proto.constructor;
+  return typeof constructor === 'function' && constructor instanceof constructor;
+}
 
 export const isArray = Array.isArray;
 
@@ -29,50 +39,70 @@ export function debounce(func, wait) {
 }
 
 export function groupBy(array, key) {
-  return array.reduce((grouped, item) => {
-    const groupKey = isFunction(key) ? key(item) : item[key];
-    (grouped[groupKey] || (grouped[groupKey] = [])).push(item);
-    return grouped;
-  }, {});
+  return reduceBy(array, key, (grouped, groupKey, item) => {
+    if (grouped[groupKey]) {
+      grouped[groupKey].push(item);
+    } else {
+      grouped[groupKey] = [item];
+    }
+  });
+}
+
+export function countBy(array, key) {
+  return reduceBy(array, key, (grouped, groupKey) => {
+    if (grouped[groupKey]) {
+      grouped[groupKey]++;
+    } else {
+      grouped[groupKey] = 1;
+    }
+  });
 }
 
 export function groupByInArray(array, key) {
-  return array.reduce((grouped, item) => {
-    const groupKey = isFunction(key) ? key(item) : item[key];
+  return reduceBy(array, key, (grouped, groupKey, item) => {
     const group = find(grouped, ([k]) => k === groupKey);
     if (group) {
       group[1].push(item);
     } else {
       grouped.push([groupKey, [item]]);
     }
-    return grouped;
   }, []);
 }
 
-export function flatten(array) {
-  const result = [];
-  array.forEach(value => {
+export function flatten(array, deep = false) {
+  return array.reduce((flat, value) => {
     if (isArray(value)) {
-      result.push(...value);
+      flat.push(...(deep ? flatten(value, true) : value));
     } else {
+      flat.push(value);
+    }
+    return flat;
+  }, []);
+}
+
+export function intersection(a, b) {
+  if (!isArray(b)) {
+    b = [b];
+  }
+  return (isArray(a) ? a : [a]).reduce((result, value) => {
+    if (includes(b, value)) {
       result.push(value);
     }
-  });
-  return result;
+    return result;
+  }, []);
 }
 
 export function deepMerge(destination, source) {
-  const result = Object.assign({}, destination);
-  Object.keys(source).forEach(key => {
+  return Object.keys(source).reduce((result, key) => {
     if (source[key]) {
       if (isPlainObject(destination[key]) && isPlainObject(source[key])) {
         result[key] = deepMerge(destination[key], source[key]);
       } else {
         result[key] = source[key];
       }
+      return result;
     }
-  });
-  return result;
+  }, Object.assign({}, destination));
 }
 
 export function filter(collection, conditions) {
@@ -88,18 +118,29 @@ export function map(collection, iteratee) {
 }
 
 export function mapValues(object, iteratee) {
-  const result = {};
-  Object.keys(object).forEach(key => {
+  return Object.keys(object).reduce((result, key) => {
     result[key] = iteratee(object[key]);
-  });
-  return result;
+    return result;
+  }, {});
 }
 
 export function without(collection, ...values) {
-  return filter(collection, item => !values.includes(item));
+  return filter(collection, item => !includes(values, item));
+}
+
+export function includes(collection, searchElement) {
+  return Array.prototype.indexOf.call(collection, searchElement) !== -1;
 }
 
 // private
+
+function reduceBy(array, key, reducer, initial = {}) {
+  return Array.prototype.reduce.call(array, (grouped, item) => {
+    const groupKey = isFunction(key) ? key(item) : item[key];
+    reducer(grouped, groupKey, item);
+    return grouped;
+  }, initial);
+}
 
 function filterBase(baseName, collection, conditions) {
   return Array.prototype[baseName].call(collection, makeConditionsMatch(conditions));

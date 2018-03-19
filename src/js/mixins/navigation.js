@@ -3,30 +3,38 @@ export default Base => (class extends Base {
   static pageEnterEventName = 'page:enter';
   static pageLeaveEventName = 'page:leave';
   static pageSelector = 'body';
+  navigationStarted = false;
 
   constructor(options) {
     super(options);
-    this.logging.navigation = this.constructor.readOption(options.logging, 'navigation', true);
+    if (NORMAS_DEBUG) {
+      this.constructor.readOptions(this.logging, options.logging, {
+        navigation: true,
+        navigationGrouping: true,
+      });
+    }
     this.bindPageEvents(options);
-    this.log('info', 'construct',
-      `🗺 "${this.instanceName}" navigation mixin activated. logging.navigation =`, this.logging.navigation);
+    if (NORMAS_DEBUG) {
+      this.log('info', 'construct',
+        `🗺 "${this.instanceName}" navigation mixin activated. logging.navigation =`, this.logging.navigation);
+    }
   }
 
   bindPageEvents(options) {
-    if (options.Turbolinks || global.Turbolinks) {
-      const turboNormasImportPath = `normas${process.env.NODE_ENV === 'development' ? '/src/js' : ''}`;
-      this.log('warn', 'construct',
-        `🗺 You have Turbolinks and can use '${turboNormasImportPath}/normasWithTurbolinks' instead 'normas'.`);
+    if (NORMAS_DEBUG && (options.Turbolinks || global.Turbolinks)) {
+      this.log('warn',
+        '🗺 You have Turbolinks, but not use integration.',
+        this.constructor.readmeLink('turbolinks-integration'));
     }
     $(this.pageEnter.bind(this));
   }
 
   listenToPage(enter, leave = null) {
     if (enter) {
-      this.listenEvents(this.constructor.pageEnterEventName, enter);
+      this.$el.on(this.constructor.pageEnterEventName, (event, $page) => enter($page));
     }
     if (leave) {
-      this.listenEvents(this.constructor.pageLeaveEventName, leave);
+      this.$el.on(this.constructor.pageLeaveEventName, (event, $page) => leave($page));
     }
   }
 
@@ -47,7 +55,9 @@ export default Base => (class extends Base {
   }
 
   replaceLocation(url) {
-    this.log('warn', '🗺 `replaceLocation` works only with Turbolinks.');
+    if (NORMAS_DEBUG) {
+      this.log('warn', '🗺 `replaceLocation` works only with Turbolinks.');
+    }
   }
 
   pushLocation(url, title = null, state = null) {
@@ -55,19 +65,31 @@ export default Base => (class extends Base {
   }
 
   sayAboutPageLoading(state) {
-    this.log('warn', '🗺 `sayAboutPageLoading` works only with Turbolinks.');
+    if (NORMAS_DEBUG) {
+      this.log('warn', '🗺 `sayAboutPageLoading` works only with Turbolinks.');
+    }
   }
 
   pageEnter() {
+    if (!this.navigationStarted) {
+      this.navigationStarted = true;
+      if (NORMAS_DEBUG && this.logging.constructGrouping) {
+        this.log('groupEnd', 'construct');
+      }
+    }
     const $page = this.$page();
-    this.logPage('enter', $page);
+    if (NORMAS_DEBUG) {
+      this.logPage('enter', $page);
+    }
     this.trigger(this.constructor.pageEnterEventName, $page);
     this.sayAboutContentEnter($page);
   }
 
   pageLeave() {
     const $page = this.$page();
-    this.logPage('leave', $page);
+    if (NORMAS_DEBUG) {
+      this.logPage('leave', $page);
+    }
     this.sayAboutContentLeave($page);
     this.trigger(this.constructor.pageLeaveEventName, $page);
   }
@@ -79,8 +101,29 @@ export default Base => (class extends Base {
   // private
 
   logPage(logEvent, $page) {
+    if (!NORMAS_DEBUG || !this.debugMode || !this.logging.navigation) {
+      return;
+    }
     const enter = logEvent === 'enter';
     const [eventName, ...eventStyles] = this.constructor.logCycle(logEvent, enter, 10);
-    this.log('navigation', `🗺 page ${eventName}`, ...eventStyles, ...(enter ? [window.location.href] : []), $page);
+    if (this.logging.navigationGrouping) {
+      this.logPageGroupEnd();
+    }
+    this.log(this.constructor.groupingMethod(this.logging.navigationGrouping), 'navigation',
+      `🗺 page ${eventName}`,
+      ...eventStyles,
+      ...(enter ? [window.location.href] : []),
+      $page);
+    this.navigationGroup = true;
+    if (enter && this.logging.navigationGrouping) {
+      setTimeout(() => this.logPageGroupEnd(), 25);
+    }
+  }
+
+  logPageGroupEnd() {
+    if (NORMAS_DEBUG && this.navigationGroup) {
+      this.log('groupEnd', 'navigation');
+      this.navigationGroup = false;
+    }
   }
 });

@@ -11,7 +11,10 @@ normas.listenEvents('.b-split-field', {
     $(newCellHtml).hide().insertAfter($splitCellControl.closest('.b-split-field__cell')).fadeIn();
   },
   'click        .js-remove-cell': $removeCellControl => {
-    const $cell = $removeCellControl.closest('.b-split-field__cell');
+    let $cell = $removeCellControl.closest('.b-split-field__cell');
+    if ($cell.siblings().length === 0) {
+      $cell = $cell.closest('.b-split-field__row');
+    }
     $cell.fadeOut(() => $cell.remove());
   },
   'ajax:error': ($target, event, other) => console.log(other),

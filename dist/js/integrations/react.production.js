@@ -1,2 +1,2 @@
 "use strict";var e={selector:"[data-react-component]",listenOptions:{}};module.exports=function(t,n){var o=t.normas,r=t.React,a=t.ReactDOM,s=arguments.length>2&&void 0!==arguments[2]?arguments[2]:{},c=o.helpers.deepMerge(e,s),i=c.selector,p=c.listenOptions;o.listenToElement(i,function(e){var t=e[0],o=t.getAttribute("data-react-component"),s=JSON.parse(t.getAttribute("data-props")),c=n[o],i=r.createElement(c,s);a.render(i,t)},function(e){var t=e[0];a.unmountComponentAtNode(t)},p)};
-//# sourceMappingURL=react.js.map
+//# sourceMappingURL=react.production.js.map

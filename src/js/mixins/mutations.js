@@ -1,20 +1,21 @@
-let initialMutations = true;
-
+// require navigation mixin
 export default Base => (class extends Base {
   constructor(options) {
     super(options);
     if (!this.enablings) this.enablings = {};
-    this.enablings.mutations = this.constructor.readOption(options.enablings, 'mutations', true);
-    this.log('info', 'construct',
-      ...this.constructor.logColor(`🤖 "${this.instanceName}" MutationObserver %REPLACE%.`,
-        this.enablings.mutations ? 'enabled' : 'disabled',
-        this.enablings.mutations ? 'green' : 'blue'));
+    this.constructor.readOptions(this.enablings, options.enablings, { mutations: true });
+    if (NORMAS_DEBUG) {
+      this.log('info', 'construct',
+          ...this.constructor.logColor(`🤖 "${this.instanceName}" MutationObserver %REPLACE%.`,
+            this.enablings.mutations ? 'enabled' : 'disabled',
+            this.enablings.mutations ? 'green' : 'blue'));
+    }
     if (this.enablings.mutations) {
       if (MutationObserver) {
         this.observeMutations();
-        this.log('construct', `🤖 "${this.instanceName}" mutation observer activated.`);
-      } else {
-        this.log('warn', 'construct', `🤖 "${this.instanceName}" mutation observer NOT SUPPORTED!`);
+      } else if (NORMAS_DEBUG) {
+        this.log('warn', 'construct', `🤖 "${this.instanceName}" mutation observer NOT SUPPORTED!`,
+          this.constructor.readmeLink('-content-broadcasting'));
       }
     }
   }
@@ -26,10 +27,9 @@ export default Base => (class extends Base {
   }
 
   checkMutations = (mutation) => {
-    if (mutation.type !== 'childList') {
+    if (!this.navigationStarted || mutation.type !== 'childList') {
       return;
     }
-
     const removedNodes = this.constructor.filterMutationNodes(mutation.removedNodes);
     const addedNodes = this.constructor.filterMutationNodes(mutation.addedNodes, true);
 
@@ -41,27 +41,14 @@ export default Base => (class extends Base {
     }
   };
 
-  pageEnter() {
-    if (initialMutations) {
-      initialMutations = false;
-    }
-    super.pageEnter();
-  }
-
-  static filterMutationNodes(nodes, checkParentNode = false) {
-    return Array.prototype.filter.call(nodes, node => {
-      if (initialMutations) {
-        node.normasInitialMutationReady = true;
-        if (node.parentElement && node.parentElement.normasInitialMutationReady) {
-          return false;
-        }
-      }
-      return node.nodeType === 1 &&
+  static filterMutationNodes(nodes, checkParentElement = false) {
+    return Array.prototype.filter.call(nodes, node => (
+      node.nodeType === 1 &&
         !node.isPreview &&
         !['TITLE', 'META'].includes(node.tagName) &&
         node.className !== 'turbolinks-progress-bar' &&
-        !(checkParentNode && !node.parentElement) &&
-        !(node.parentElement && node.parentElement.tagName === 'HEAD');
-    });
+        !(checkParentElement && !node.parentElement) &&
+        !(node.parentElement && node.parentElement.tagName === 'HEAD')
+    ));
   }
 });

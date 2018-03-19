@@ -1,10 +1,21 @@
+/**
+ * Views system for Normas
+ *
+ * @see {@link https://github.com/evrone/normas#-views|Docs}
+ * @see {@link https://github.com/evrone/normas/blob/master/src/js/mixins/views.js|Source}
+ * @license MIT
+ * @copyright Dmitry Karpunin <koderfunk@gmail.com>, 2017-2018
+ */
+
 // TODO: may be rename Views, views, View, view
-import { filter, find, without } from '../lib/helpers';
-import View from '../view';
+import normasView from './view';
+
+export default Base => normasViews(Base, normasView(Base.NormasCore));
 
 // require content mixin
 // require events mixin
-export default Base => (class extends Base {
+const normasViews = (Base, View) => (class extends Base {
+  static View = View;
   View = View;
   viewClasses = {};
   viewInstances = [];
@@ -13,16 +24,26 @@ export default Base => (class extends Base {
     super(options);
     this.viewOptions = {
       debugMode: this.debugMode,
-      logging: { ...this.logging },
       ...options.viewOptions,
     };
-    this.log('info', 'construct', `🏭 "${this.instanceName}" views mixin activated.`);
+    if (NORMAS_DEBUG) {
+      this.viewOptions.logging = {
+        ...this.logging,
+        constructGrouping: 'groupCollapsed',
+        constructPrefix: '🏭', // private
+        eventsDebounced: false,
+        ...(options.viewOptions && options.viewOptions.logging),
+      };
+      this.log('info', 'construct', `🏭 "${this.instanceName}" views mixin activated.`);
+    }
   }
 
   registerView(viewClass, options = {}) {
     if (this.viewClasses[viewClass.selector]) {
-      this.error(`🏭 View class for selector \`${viewClass.selector}\` already registered`,
-        this.viewClasses[viewClass.selector]);
+      if (NORMAS_DEBUG) {
+        this.error(`🏭 View class for selector \`${viewClass.selector}\` already registered`,
+          this.viewClasses[viewClass.selector]);
+      }
       return;
     }
     this.viewClasses[viewClass.selector] = viewClass;
@@ -47,8 +68,7 @@ export default Base => (class extends Base {
       viewClass.instanceIndex = 1;
     }
     const view = new viewClass({
-      ...this.viewOptions,
-      ...options,
+      ...this.helpers.deepMerge(this.viewOptions, options),
       instanceName: `${viewClass.selector}_${viewClass.instanceIndex}`,
       $el,
     });
@@ -59,7 +79,9 @@ export default Base => (class extends Base {
   canBind($element, viewClass) {
     const view = this.getViewsOnElement($element, viewClass)[0];
     if (view) {
-      this.log('warn', '🏭 Element already has bound view', $element, viewClass, view);
+      if (NORMAS_DEBUG) {
+        this.log('warn', '🏭 Element already has bound view', $element, viewClass, view);
+      }
       return false;
     }
     return true;
@@ -69,7 +91,7 @@ export default Base => (class extends Base {
     const view = this.getViewsOnElement($element, viewClass)[0];
     if (view) {
       view.destructor();
-      this.viewInstances = without(this.viewInstances, view);
+      this.viewInstances = this.helpers.without(this.viewInstances, view);
     }
   }
 
@@ -79,24 +101,24 @@ export default Base => (class extends Base {
     if (viewClass) {
       filterOptions.constructor = viewClass;
     }
-    return filter(this.viewInstances, filterOptions);
+    return this.helpers.filter(this.viewInstances, filterOptions);
   }
 
   getViewsInContainer($container, checkRoot = true) {
-    return filter(this.viewInstances, view =>
+    return this.helpers.filter(this.viewInstances, view =>
       view.$el.closest($container).length > 0 && (checkRoot || view.el !== $container[0])
     );
   }
 
   getAllViews(viewClass) {
-    return filter(this.viewInstances, { constructor: viewClass });
+    return this.helpers.filter(this.viewInstances, { constructor: viewClass });
   }
 
   getFirstView(viewClass) {
-    return find(this.viewInstances, { constructor: viewClass });
+    return this.helpers.find(this.viewInstances, { constructor: viewClass });
   }
 
   getFirstChildView(viewClass) {
-    return find(this.viewInstances, view => view instanceof viewClass);
+    return this.helpers.find(this.viewInstances, view => view instanceof viewClass);
   }
 });

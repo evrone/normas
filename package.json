@@ -1,6 +1,6 @@
 {
   "name": "normas",
-  "version": "0.3.0",
+  "version": "0.4.0-rc1",
   "description": "Normal Ligtweight Javascript Framework for server-side render compatible with Turbolinks",
   "author": "Dmitry Karpunin <koderfunk@gmail.com>",
   "license": "MIT",
@@ -17,11 +17,19 @@
   "main": "dist/js/normas.js",
   "module": "dist/js/normas.js",
   "esnext": "src/js/index.js",
+  "bundlesize": [
+    {
+      "path": "dist/js/normas.js",
+      "maxSize": "7 kB"
+    },
+    {
+      "path": "dist/js/normas.production.js",
+      "maxSize": "4 kB"
+    }
+  ],
   "scripts": {
-    "build": "rollup -c config/rollup.config.js"
-  },
-  "dependencies": {
-    "is-plain-object": "~2.0.4"
+    "build": "rollup -c config/rollup.config.js",
+    "test": "bundlesize"
   },
   "devDependencies": {
     "babel-core": "~6.26.0",
@@ -31,12 +39,15 @@
     "babel-plugin-transform-export-extensions": "~6.22.0",
     "babel-plugin-transform-object-rest-spread": "~6.26.0",
     "babel-preset-env": "~1.6.0",
+    "bundlesize": "~0.16.0",
     "rollup": "~0.54.0",
     "rollup-config-module": "~2.0.0",
     "rollup-plugin-babel": "~3.0.3",
-    "rollup-plugin-cleanup": "^2.0.0",
     "rollup-plugin-commonjs": "~8.3.0",
-    "rollup-plugin-node-resolve": "~3.0.2"
+    "rollup-plugin-filesize": "~1.5.0",
+    "rollup-plugin-node-resolve": "~3.0.2",
+    "rollup-plugin-progress": "~0.4.0",
+    "rollup-plugin-uglify": "~3.0.0"
   },
   "peerDependencies": {
     "jquery": "^3.0.0"
