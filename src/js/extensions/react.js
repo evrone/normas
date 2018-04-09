@@ -7,32 +7,59 @@
  * @copyright Dmitry Karpunin <koderfunk@gmail.com>, 2017-2018
  */
 
-const defaults = {
+const defaultOptions = {
   selector: '[data-react-component]',
   listenOptions: {},
 };
 
-export default function({ normas, React, ReactDOM }, components, options = {}) {
-  const { selector, listenOptions } = normas.helpers.deepMerge(defaults, options);
+export default {
+  normas: null,
+  React: null,
+  ReactDOM: null,
+  PropTypes: null,
+  components: {},
 
-  normas.listenToElement(
-    selector,
-    mountComponentToElement,
-    unmountComponentFromElement,
-    listenOptions,
-  );
+  init({ normas, React, ReactDOM, PropTypes }, options = {}) {
+    const { selector, listenOptions } = normas.helpers.deepMerge(defaultOptions, options);
+    this.normas = normas;
+    this.React = React;
+    this.ReactDOM = ReactDOM;
+    this.PropTypes = PropTypes;
 
-  function mountComponentToElement($element) {
+    normas.listenToElement(
+      selector,
+      this.mountComponentToElement.bind(this),
+      this.unmountComponentFromElement.bind(this),
+      listenOptions,
+    );
+  },
+
+  registerComponents(components) {
+    Object.assign(this.components, components);
+  },
+
+  // private
+
+  mountComponentToElement($element) {
     const domNode = $element[0];
     const name = domNode.getAttribute('data-react-component');
-    const props = JSON.parse(domNode.getAttribute('data-props'));
-    const componentClass = components[name];
-    const component = React.createElement(componentClass, props);
-    ReactDOM.render(component, domNode);
-  }
+    if (!name) {
+      this.normas.error('No component name in', domNode);
+      return;
+    }
+    const componentClass = this.components[name];
+    if (!componentClass) {
+      this.normas.error('No registered component class with name', name);
+      return;
+    }
+    const propsString = domNode.getAttribute('data-props');
+    const props = propsString ? JSON.parse(propsString) : null;
+    const component = this.React.createElement(componentClass, props);
+    this.ReactDOM.render(component, domNode);
+  },
 
-  function unmountComponentFromElement($element) {
+  unmountComponentFromElement($element) {
     const domNode = $element[0];
-    ReactDOM.unmountComponentAtNode(domNode);
-  }
-};
+    this.ReactDOM.unmountComponentAtNode(domNode);
+  },
+}

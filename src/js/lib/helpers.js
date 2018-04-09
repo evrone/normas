@@ -113,19 +113,27 @@ export function find(collection, conditions) {
   return filterBase('find', collection, conditions);
 }
 
+export function findIndex(collection, conditions) {
+  return filterBase('find', collection, conditions);
+}
+
 export function map(collection, iteratee) {
   return Array.prototype.map.call(collection, iteratee);
 }
 
 export function mapValues(object, iteratee) {
   return Object.keys(object).reduce((result, key) => {
-    result[key] = iteratee(object[key]);
+    result[key] = iteratee(object[key], key);
     return result;
   }, {});
 }
 
 export function without(collection, ...values) {
-  return filter(collection, item => !includes(values, item));
+  return difference(collection, values);
+}
+
+export function difference(arrayA, arrayB) {
+  return filter(arrayA, a => !includes(arrayB, a));
 }
 
 export function includes(collection, searchElement) {

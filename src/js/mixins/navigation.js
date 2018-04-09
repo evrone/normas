@@ -2,6 +2,7 @@
 export default Base => (class extends Base {
   static pageEnterEventName = 'page:enter';
   static pageLeaveEventName = 'page:leave';
+  static navigationStartedEventName = 'navigation:started';
   static pageSelector = 'body';
   navigationStarted = false;
 
@@ -18,6 +19,10 @@ export default Base => (class extends Base {
       this.log('info', 'construct',
         `🗺 "${this.instanceName}" navigation mixin activated. logging.navigation =`, this.logging.navigation);
     }
+  }
+
+  onStart(callback) {
+    this.$el.one(this.constructor.navigationStartedEventName, (event, $page) => callback($page));
   }
 
   bindPageEvents(options) {
@@ -73,6 +78,7 @@ export default Base => (class extends Base {
   pageEnter() {
     if (!this.navigationStarted) {
       this.navigationStarted = true;
+      this.trigger(this.constructor.navigationStartedEventName, $page);
       if (NORMAS_DEBUG && this.logging.constructGrouping) {
         this.log('groupEnd', 'construct');
       }

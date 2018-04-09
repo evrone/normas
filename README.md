@@ -458,14 +458,17 @@ export default normas;
 Just import integration module and use it:
 ```js
 import normasReact from 'normas/dist/js/integrations/react';
-import normas from 'lib/normas'; // or may be you use global Normas instance
+import normas from 'lib/normas'; // or may be you use global Normas instance like `app`
 import React from 'react';
 import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types'; // optional
+
+normasReact.init({ normas, React, ReactDOM, PropTypes /* optional */ }));
 
 import ComponentA from 'components/ComponentA';
 import ComponentB from 'components/ComponentB';
 
-normasReact({ normas, React, ReactDOM }, {
+normasReact.registerComponents({
   ComponentA,
   ComponentB,
 });
@@ -476,8 +479,10 @@ If you want to understand the mechanism, or realize your own, look at the [sourc
 If you use Ruby on Rails, you can define in your `app/helpers/*_helper.rb`:
 
 ```ruby
-  def react_component(component_name, props = nil)
-    content_tag :div, '', data: { react_component: component_name, props: props }
+  def react_component(component_name, props = nil, html_options = {})
+    html_options[:data] ||= {}
+    html_options[:data].reverse_merge!(react_component: component_name, props: props)
+    content_tag :div, '', html_options
   end
  ```
 

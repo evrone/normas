@@ -32,7 +32,7 @@ export default Base => (class extends Base {
       }
       if (delay > 0) {
         $elements.data(this.constructor.elementEnterTimeoutIdDataName, setTimeout(() => {
-          $content = $content.filter(node => node.parentElement);
+          $content = $content.filter((index, node) => node.parentElement);
           if ($content.length === 0) {
             return;
           }
