@@ -1,4 +1,3 @@
-// TODO: try build without this module for production
 export default Base => (class extends Base {
   constructor(options) {
     super(options);
@@ -93,7 +92,7 @@ export default Base => (class extends Base {
 
   static contentName($content) {
     const contentCounts = this.helpers.countBy($content, content => {
-      const classList = content.classList ? Array.prototype.map.call(content.classList, className => className) : [];
+      const classList = content.classList ? this.helpers.map(content.classList, className => className) : [];
       return [content.tagName].concat(classList).join('.');
     });
     return Object.keys(contentCounts).map(name => {

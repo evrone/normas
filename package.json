@@ -24,7 +24,7 @@
     },
     {
       "path": "dist/js/normas.production.js",
-      "maxSize": "4 kB"
+      "maxSize": "4.5 kB"
     }
   ],
   "scripts": {

@@ -70,7 +70,7 @@ const normasViews = (Base, View) => (class extends Base {
     const view = new viewClass({
       ...this.helpers.deepMerge(this.viewOptions, options),
       instanceName: `${viewClass.selector}_${viewClass.instanceIndex}`,
-      $el,
+      el: $el[0],
     });
     this.viewInstances.push(view);
     return view;

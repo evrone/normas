@@ -10,7 +10,7 @@ export default Base => (class extends Base {
   // protected
 
   constructor(options) {
-    Object.assign(options, options.$el.data());
+    Object.assign(options, Base.dom.data(options.el));
     super(options);
     this.reflectOptions(options);
     this.initializeEvents(options);
@@ -65,5 +65,9 @@ export default Base => (class extends Base {
       :
       (typeof this.helpers.isPlainObject(handle) ? this.linkEvents(handle) : handle)
     );
+  }
+
+  data(key, ...value) {
+    this.dom.data(this.el, key, ...value);
   }
 });

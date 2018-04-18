@@ -1,14 +1,17 @@
 import * as helpers from '../lib/helpers';
+import dom from './dom';
 
 export default class Base {
   static version = '0.4.0-rc1';
   static helpers = helpers;
+  static dom = dom;
   helpers = helpers;
+  dom = dom;
 
-  constructor({ $el = $(document), instanceName = 'NormasApp' }) {
+  constructor({ el = document, instanceName = 'NormasApp' }) {
     this.instanceName = instanceName;
-    this.$el = $el;
-    this.el = $el[0];
+    this.el = el;
+    this.$el = $(el);
   }
 
   $(...args) {

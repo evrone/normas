@@ -121,6 +121,10 @@ export function map(collection, iteratee) {
   return Array.prototype.map.call(collection, iteratee);
 }
 
+export function each(collection, iteratee) {
+  return Array.prototype.forEach.call(collection, iteratee);
+}
+
 export function mapValues(object, iteratee) {
   return Object.keys(object).reduce((result, key) => {
     result[key] = iteratee(object[key], key);
