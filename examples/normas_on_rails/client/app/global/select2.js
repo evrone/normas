@@ -3,8 +3,7 @@ import 'select2/dist/css/select2';
 import normas from 'lib/normas';
 
 export function bindSelect2($element) {
-  normas.log('bindSelect2');
-  let element = $element[0]
+  let element = $element[0];
   $element.select2();
   let select2 = $element.data('select2');
   // this and other changes in this commit resolve Select2 and Fastclick.js conflict
@@ -28,11 +27,11 @@ export function unbindSelect2($element) {
   }
 }
 
-normas.listenToPage(() => {
-  $('.select2.select2-container').remove();
-});
-
-normas.listenToElement('select', bindSelect2, unbindSelect2, { delay: 50 });
+// normas.listenToPage(() => {
+//   $('.select2.select2-container').remove();
+// });
+//
+normas.listenToElement('select', bindSelect2, unbindSelect2, { delay: 500 });
 
 normas.listenEvents({
   // changeMedia: debounce(resizeSelects, 100 + 10),

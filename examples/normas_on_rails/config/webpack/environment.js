@@ -14,4 +14,10 @@ environment.toWebpackConfig = () => {
   return config;
 };
 
+environment.loaders.append('source-map', {
+  test: /\.js$/,
+  use: ['source-map-loader'],
+  enforce: 'pre'
+});
+
 module.exports = environment;

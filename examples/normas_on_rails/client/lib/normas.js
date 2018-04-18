@@ -2,7 +2,7 @@ import Normas from 'normas';
 import normasTurbolinks from 'normas/dist/js/integrations/turbolinks';
 import normasViews from 'normas/dist/js/extensions/views';
 // import Turbolinks from 'turbolinks';
-import Turbolinks from '../../../vendor/turbolinks-debug';
+import Turbolinks from '../../vendor/turbolinks-debug';
 
 const NormasWithTurbolinks =
   normasViews(
