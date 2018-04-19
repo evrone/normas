@@ -1,11 +1,13 @@
-import * as helpers from '../lib/helpers';
+import * as importedHelpers from '../lib/helpers';
 import dom from './dom';
+
+const mutableHelpers = Object.assign({}, importedHelpers);
 
 export default class Base {
   static version = '0.4.0-rc1';
-  static helpers = helpers;
+  static helpers = mutableHelpers;
   static dom = dom;
-  helpers = helpers;
+  helpers = mutableHelpers;
   dom = dom;
 
   constructor({ el = document, instanceName = 'NormasApp' }) {
