@@ -19,9 +19,9 @@ export default {
   PropTypes: null,
   components: {},
 
-  init({ normas, React, ReactDOM, PropTypes }, options = {}) {
+  init({ normas, app, React, ReactDOM, PropTypes }, options = {}) {
     const { selector, listenOptions } = normas.helpers.deepMerge(defaultOptions, options);
-    this.normas = normas;
+    this.normas = normas || app;
     this.React = React;
     this.ReactDOM = ReactDOM;
     this.PropTypes = PropTypes;

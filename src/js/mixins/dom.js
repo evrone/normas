@@ -10,7 +10,9 @@ export default {
   },
 
   removeMemoryData(element, key) {
+    const value = element[key];
     delete element[key];
+    return value;
   },
 
   data(element, key, ...value) {
@@ -27,7 +29,9 @@ export default {
   },
 
   removeData(element, key) {
+    const value = element.dataset[key];
     delete element.dataset[key];
+    return value;
   },
 
   dataStringify(data) {
@@ -61,5 +65,9 @@ export default {
 
   contains(rootElement, element) {
     return (rootElement === document ? document.body : rootElement).contains(element);
-  }
+  },
+
+  remove(element) {
+    element.parentNode.removeChild(element);
+  },
 };
