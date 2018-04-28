@@ -1,3 +1,5 @@
+// required typography
+
 @function font-source-declaration($font-family, $file-path, $file-formats, $base64: false) {
   $src: ();
   $formats-map: (

@@ -35,6 +35,7 @@ Feel free to start watching and ⭐ project in order not miss the release or upd
 * 🏭 [Views](#-views)
 * 🔦 [Debugging](#-debugging)
 * ⚙ [Helpers](#-helpers)
+* 🎨 [SCSS addons](#-scss-addons)
 * 🔌 [Integrations](#-integrations)
   * [Turbolinks integration](#turbolinks-integration)
   * [React.js integration](#reactjs-integration)
@@ -430,6 +431,12 @@ $someElement
   .each$(($element, index) => { $element.removeClass(`.jquery-too_${index}`); });
 ```
 
+## 🎨 SCSS addons
+
+Normas package includes additional scss-files that will help in styling your application.
+
+***To be continued...***
+
 ## 🔌 Integrations
 
 ### Turbolinks integration
@@ -501,11 +508,11 @@ Latest ✔ | Latest ✔ | Latest ✔ | 11+ ✔ | 9.1+ ✔ | Latest ✔
 - More examples of usage with actual javascript plugins and libs
 - Improve code style and quality
 - Improve debugging
-- Upgrade to Babel 7
 - Optional jQuery usage
-- Example on node.js with Express.js
-- Use TypeScript
 - Tests
+- Upgrade to Babel 7
+- Use TypeScript
+- Example on node.js with Express.js
 
 ## 🤝 Contributing
 

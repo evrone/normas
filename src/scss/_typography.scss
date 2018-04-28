@@ -3,28 +3,36 @@
     font-size: $font-size;
   }
   @if $line-height {
-    line-height: $line-height;
+    @if type-of($line-height) == number or index(inherit initial) {
+      line-height: $line-height;
+    } @else {
+      @include font-prop($line-height);
+    }
   }
   @each $arg in $args {
-    $arg-part: nth($arg, 1);
-    @if type-of($arg-part) == color {
-      color: $arg;
-    } @else if index(capitalize lowercase uppercase, $arg-part) {
-      text-transform: $arg;
-    } @else if index(center left right, $arg-part) {
-      text-align: $arg;
-    } @else if index(blink line-through overline underline, $arg-part) {
-      text-decoration: $arg;
-    } @else if index(pre pre-line pre-wrap nowrap, $arg-part) {
-      white-space: $arg;
+    @include font-prop($arg);
+  }
+}
+
+@mixin font-prop($arg) {
+  $arg-part: nth($arg, 1);
+  @if type-of($arg-part) == color {
+    color: $arg;
+  } @else if index(capitalize lowercase uppercase, $arg-part) {
+    text-transform: $arg;
+  } @else if index(center left right, $arg-part) {
+    text-align: $arg;
+  } @else if index(blink line-through overline underline, $arg-part) {
+    text-decoration: $arg;
+  } @else if index(pre pre-line pre-wrap nowrap, $arg-part) {
+    white-space: $arg;
+  } @else {
+    $normalized-font-weight: font-weight($arg-part);
+    @if $normalized-font-weight {
+      $arg: set-nth($arg, 1, $normalized-font-weight);
+      font-weight: $arg;
     } @else {
-      $normalized-font-weight: font-weight($arg-part);
-      @if $normalized-font-weight {
-        $arg: set-nth($arg, 1, $arg-part);
-        font-weight: $arg;
-      } @else {
-        @error 'Unknown argument in @mixin font(..., #{$arg-part}:#{type-of($arg-part)}, ..,)';
-      }
+      @error 'Unknown argument in @mixin font(..., #{$arg-part}:#{type-of($arg-part)}, ...)';
     }
   }
 }
@@ -36,19 +44,6 @@
   } @else {
     @error 'Unknown argument in @function font-weight($font-weight: #{$font-weight})';
   }
-}
-
-@mixin ellipsis($display: inline-block, $width: 100%) {
-  @if $display {
-    display: $display;
-  }
-  @if $width {
-    max-width: $width;
-  }
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  word-wrap: normal;
 }
 
 @function font-weight($font-weight) {
@@ -72,4 +67,17 @@
     @return 900;
   }
   @return false;
+}
+
+@mixin ellipsis($display: inline-block, $width: 100%) {
+  @if $display {
+    display: $display;
+  }
+  @if $width {
+    max-width: $width;
+  }
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  word-wrap: normal;
 }

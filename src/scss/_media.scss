@@ -1,0 +1,52 @@
+@mixin media($query) {
+  $media-query: 'screen';
+  $tick: false;
+  $prop: false;
+  @each $q in $query {
+    $tick: is-not($tick);
+    @if $tick {
+      $prop: $q;
+      $media-query: $media-query + " and (#{$q}:";
+    } @else {
+      @if $prop == max-width {
+        $q: $q - 1px;
+      }
+      $media-query: $media-query + " #{$q})";
+    }
+  }
+  @media #{$media-query} {
+    @content;
+  }
+}
+
+$_media-variant: false;
+$_media-args: false;
+$_media-first-arg: false;
+$_media-last-arg: false;
+
+@mixin media-variants($media-variants, $media-prop: max-width) {
+  $_media-first-arg: true !global;
+  $index: 0;
+  $length: length($media-variants);
+  @each $args in $media-variants {
+    $_media-args: $args !global;
+    $_media-variant: map-get($_media-args, variant) !global;
+    $index: $index + 1;
+    @if $index == $length {
+      $_media-last-arg: true !global;
+    }
+    @if $_media-variant == base {
+      @content;
+    } @else {
+      @include media($media-prop $_media-variant) {
+        @content;
+      }
+    }
+    @if $_media-first-arg {
+      $_media-first-arg: false !global;
+    }
+  }
+  $_media-last-arg: false !global;
+  $_media-variant: false !global;
+  $_media-args: false !global;
+}

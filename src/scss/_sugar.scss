@@ -51,25 +51,22 @@
 }
 
 @mixin before($display: block, $content: '') {
-  &::before {
-    display: $display;
-    content: $content;
-    @content;
-  }
+  @include pseudo('&::before', $display, $content) { @content; }
 }
 
 @mixin after($display: block, $content: '') {
-  &::after {
-    display: $display;
-    content: $content;
-    @content;
-  }
+  @include pseudo('&::after', $display, $content) { @content; }
 }
 
 @mixin both($display: block, $content: '') {
-  &::before,
-  &::after {
-    display: $display;
+  @include pseudo('&::before, &::after', $display, $content) { @content; }
+}
+
+@mixin pseudo($selector, $display: block, $content: '') {
+  #{$selector} {
+    @if $display {
+      display: $display;
+    }
     content: $content;
     @content;
   }
