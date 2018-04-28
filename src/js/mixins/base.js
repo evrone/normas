@@ -4,7 +4,7 @@ import dom from './dom';
 const mutableHelpers = Object.assign({}, importedHelpers);
 
 export default class Base {
-  static version = '0.4.0-rc1';
+  static version = '0.4.0-rc2';
   static helpers = mutableHelpers;
   static dom = dom;
   helpers = mutableHelpers;

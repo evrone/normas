@@ -1,6 +1,6 @@
 {
   "name": "normas",
-  "version": "0.4.0-rc1",
+  "version": "0.4.0-rc2",
   "description": "Normal Ligtweight Javascript Framework for server-side render compatible with Turbolinks",
   "author": "Dmitry Karpunin <koderfunk@gmail.com>",
   "license": "MIT",
