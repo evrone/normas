@@ -1,20 +1,22 @@
 @mixin font($font-size, $line-height: false, $args...) {
-  @if $font-size {
-    font-size: $font-size;
-  }
-  @if $line-height {
-    @if type-of($line-height) == number or index(inherit initial) {
-      line-height: $line-height;
-    } @else {
-      @include font-prop($line-height);
-    }
-  }
+  @include _primary-font-prop(font-size, $font-size);
+  @include _primary-font-prop(line-height, $line-height);
   @each $arg in $args {
-    @include font-prop($arg);
+    @include _font-prop($arg);
   }
 }
 
-@mixin font-prop($arg) {
+@mixin _primary-font-prop($name, $arg) {
+  @if $arg {
+    @if type-of($arg) == number or index(inherit initial, $arg) {
+      #{$name}: $arg;
+    } @else {
+      @include _font-prop($arg);
+    }
+  }
+}
+
+@mixin _font-prop($arg) {
   $arg-part: nth($arg, 1);
   @if type-of($arg-part) == color {
     color: $arg;

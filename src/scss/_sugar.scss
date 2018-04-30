@@ -133,3 +133,17 @@ $common-ui-transition-duration: 300ms !default;
   $space-top: $space - $space-bottom;
   @return $space-top $space-bottom $space;
 }
+
+@function list-to-string($list, $separator: '') {
+  $result: '';
+  $first: true;
+  @each $cut in $list {
+    @if $first {
+      $first: false;
+      $result: $cut;
+    } @else {
+      $result: "#{$result}#{$separator}#{$cut}";
+    }
+  }
+  @return $result;
+}
